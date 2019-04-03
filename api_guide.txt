@@ -1,0 +1,37 @@
+URI list
+
+--- Sites ---
+Get all sites:
+URL/sites
+
+Get sites in default radius from x and y coordinate:
+URL/sites/<x>/<y>
+
+Get sites in specific radius from x and y coordinate:
+URL/sites/<x>/<y>?radius=<500>
+
+--- Weather ---
+Get current weather in Athens:
+URL/weather
+
+Get current weather in specified place:
+URL/weather/<London,GB>
+
+--- Position ---
+Get last coordinate position of certain person:
+URL/position/<Dominic>
+
+Post updated coordinate position of certain person (yourself):
+URL/position/<Dominic>?x=<20.234>&y=<24.111>
+
+--- Route ---
+Get route from coordinate position A to coordinate position B:
+URL/route/<24.2344,24.2313>/<13.3454,25.3>
+
+
+--- Key mandatory calls ---
+Post new Site to database or update existing one (Should really do with put but we)
+URL/site/<Akropolis>?key=<key>&address=<address>&x=<x>&y=<y>&description=<description>
+
+Delete site by name
+URL/site/<Akropolis>?key=<key>

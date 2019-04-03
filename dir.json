@@ -1,0 +1,219 @@
+{
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "bbox": [
+                8.681445,
+                49.41461,
+                8.687872,
+                49.420318
+            ],
+            "type": "Feature",
+            "properties": {
+                "segments": [
+                    {
+                        "distance": 1041.9,
+                        "duration": 750.2,
+                        "steps": [
+                            {
+                                "distance": 414.7,
+                                "duration": 298.6,
+                                "type": 11,
+                                "instruction": "Head north on Wielandtstra\u00dfe",
+                                "name": "Wielandtstra\u00dfe",
+                                "way_points": [
+                                    0,
+                                    9
+                                ]
+                            },
+                            {
+                                "distance": 132.7,
+                                "duration": 95.5,
+                                "type": 1,
+                                "instruction": "Turn right onto Seitzstra\u00dfe",
+                                "name": "Seitzstra\u00dfe",
+                                "way_points": [
+                                    9,
+                                    10
+                                ]
+                            },
+                            {
+                                "distance": 57.9,
+                                "duration": 41.7,
+                                "type": 0,
+                                "instruction": "Turn left onto Quinckestra\u00dfe",
+                                "name": "Quinckestra\u00dfe",
+                                "way_points": [
+                                    10,
+                                    11
+                                ]
+                            },
+                            {
+                                "distance": 289.3,
+                                "duration": 208.3,
+                                "type": 1,
+                                "instruction": "Turn right onto Moltkestra\u00dfe",
+                                "name": "Moltkestra\u00dfe",
+                                "way_points": [
+                                    11,
+                                    14
+                                ]
+                            },
+                            {
+                                "distance": 82.7,
+                                "duration": 59.5,
+                                "type": 0,
+                                "instruction": "Turn left onto Werderplatz",
+                                "name": "Werderplatz",
+                                "way_points": [
+                                    14,
+                                    17
+                                ]
+                            },
+                            {
+                                "distance": 64.7,
+                                "duration": 46.6,
+                                "type": 1,
+                                "instruction": "Turn right onto Roonstra\u00dfe",
+                                "name": "Roonstra\u00dfe",
+                                "way_points": [
+                                    17,
+                                    18
+                                ]
+                            },
+                            {
+                                "distance": 0.0,
+                                "duration": 0.0,
+                                "type": 10,
+                                "instruction": "Arrive at Roonstra\u00dfe, straight ahead",
+                                "name": "-",
+                                "way_points": [
+                                    18,
+                                    18
+                                ]
+                            }
+                        ]
+                    }
+                ],
+                "summary": {
+                    "distance": 1041.9,
+                    "duration": 750.2
+                },
+                "way_points": [
+                    0,
+                    18
+                ]
+            },
+            "geometry": {
+                "coordinates": [
+                    [
+                        8.681495,
+                        49.41461
+                    ],
+                    [
+                        8.681445,
+                        49.415755
+                    ],
+                    [
+                        8.681509,
+                        49.416087
+                    ],
+                    [
+                        8.681674,
+                        49.4166
+                    ],
+                    [
+                        8.681815,
+                        49.417079
+                    ],
+                    [
+                        8.681873,
+                        49.417276
+                    ],
+                    [
+                        8.681882,
+                        49.417391
+                    ],
+                    [
+                        8.681859,
+                        49.417477
+                    ],
+                    [
+                        8.681765,
+                        49.417629
+                    ],
+                    [
+                        8.681515,
+                        49.41828
+                    ],
+                    [
+                        8.683295,
+                        49.418568
+                    ],
+                    [
+                        8.683159,
+                        49.419081
+                    ],
+                    [
+                        8.685008,
+                        49.41927
+                    ],
+                    [
+                        8.686507,
+                        49.41943
+                    ],
+                    [
+                        8.687109,
+                        49.419488
+                    ],
+                    [
+                        8.687088,
+                        49.4196
+                    ],
+                    [
+                        8.687009,
+                        49.420078
+                    ],
+                    [
+                        8.686989,
+                        49.420228
+                    ],
+                    [
+                        8.687872,
+                        49.420318
+                    ]
+                ],
+                "type": "LineString"
+            }
+        }
+    ],
+    "bbox": [
+        8.681445,
+        49.41461,
+        8.687872,
+        49.420318
+    ],
+    "metadata": {
+        "attribution": "openrouteservice.org | OpenStreetMap contributors",
+        "service": "routing",
+        "timestamp": 1554316666882,
+        "query": {
+            "coordinates": [
+                [
+                    8.681495,
+                    49.41461
+                ],
+                [
+                    8.687872,
+                    49.420318
+                ]
+            ],
+            "profile": "foot-walking",
+            "format": "json"
+        },
+        "engine": {
+            "version": "5.0",
+            "build_date": "2019-03-13T16:21:40Z"
+        }
+    }
+}
