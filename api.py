@@ -66,8 +66,14 @@ class Weather(Resource):
     Supports ``GET``, ``POST``"""
 
     def get(self, place=None):
-        """Get weather at certain place. If place is not specified 'Athens,GR' will be used by default\n
-        :return Returns a dict of the current weather conditions in a specified palce
+        """Get weather at certain place.\n
+        If place is empty place defaults to 'Athens,GR'
+
+        Args:
+            place (str): The location to get the weather for
+
+        Returns:
+            a dict of the current weather conditions in a specified palce
         """
         if place is None:
             place = "Athens,GR"
@@ -103,10 +109,13 @@ class Sites(Resource):
 
     def get(self, x=None, y=None, radius=5):
         """Gets all sites or sites in a certain radius from a given coordinate. Defaults to 5 kilometers.\n
-        :param x: X coordinate of the user NOTE: Must be a float eg. 2.0
-        :param y: Y coordinate of the user NOTE: Must be a float eg. 2.0
-        :param radius Radius (kilometers) in which sites should be added to the result array\n
-        :return Returns a json object of the list of sites within a given radius of the users position.
+
+        Args:    
+            x (float): X coordinate of the user NOTE: Must be a float eg. 2.0
+            y (float): Y coordinate of the user NOTE: Must be a float eg. 2.0
+            radius (float): Radius (kilometers) in which sites should be added to the result array
+        Returns:
+            a json object of the list of sites within a given radius of the users position.
         """
 
         if not sites:  # If sites array is empty renew. This should really only happen atthe beginning
@@ -161,8 +170,13 @@ class Position(Resource):
     Supports ``GET``, ``POST``"""
 
     def get(self, name):
-        """Get position for Person\n
-        :return Returns a JSON Object of the user and his last position
+        """Gets last known position for given person
+
+        Args:
+            name (str): The name of the person to get the last position for
+
+        Returns:
+            a JSON Object of the user and his last position
         """
         position = get_last_position(name)
         if position is None:
@@ -170,7 +184,14 @@ class Position(Resource):
         return json.dumps(position), 200
 
     def post(self, name):
-        """Write position to database under this name"""
+        """Writes position to database for the given name
+
+        Args:
+            name (str): The name of the person to write the new position for
+
+        Returns:
+            a string and the corresponding HTTP status code
+        """
         parser = reqparse.RequestParser()
         parser.add_argument("x")
         parser.add_argument("y")
@@ -192,10 +213,14 @@ class Route(Resource):
     Supports ``GET``"""
 
     def get(self, start, end, write_to_file=False):
-        """Get Route from point a to point b by foot\n
-        :param start Coordinate in format x.xx,y.yy
-        :param end Coordinate in format x.xx,y.yy\n
-        :return Returns the directions from A to B or Error 400
+        """Get route from point A to point B by foot NOTE: Float params must be a float eg. 2.0
+
+        Args:
+            start (float): Start position formatted as lat,lon 
+            end (float): End position formatted as lat,lon
+
+        Returns:
+            a JSON object containing all the directions from A to B
         """
         res = requests.get(MAPS_URL, {"api_key": MAPS_KEY, "start": start, "end": end})
 
@@ -212,12 +237,10 @@ class Route(Resource):
 
 class AdminSite(Resource):
 
-    """Testing
-    """
+    """Testing"""
 
     def post(self, name):
-        """Adds a new site with the specified parameters
-        """
+        """Adds a new site with the specified parameters"""
         parser = reqparse.RequestParser()
         parser.add_argument("key")
         parser.add_argument("address")
@@ -271,8 +294,10 @@ class AdminSite(Resource):
 
 
 def db_connect():
-    """Connects to database\n
-    :return Returns an instance of a MySQL Connection
+    """Connects to database
+
+    Returns:
+        an instance of a MySQL Connection
     """
     cnx = mysql.connector.connect(user="root", password="mysql#5BT", host="localhost",
                                   database="python", auth_plugin="mysql_native_password")
@@ -300,8 +325,13 @@ def renew_sites():
 
 
 def get_last_position(name):
-    """Gets last known position of a user by name\n
-    :return A dictionary of the user and the last known coordinates, together with a timestamp
+    """Gets last known position of a user by name
+
+    Args:
+        name (str): The user to get the last known position for
+
+    Returns:
+        a dictionary of the user and the last known coordinates, together with a timestamp
     """
     cnx = db_connect()
     cursor = cnx.cursor()
@@ -331,9 +361,13 @@ def get_last_position(name):
 
 
 def get_user(name):
-    """Get user object by name eg. stschdom\n
-    :param name The username for a given user\n
-    :return Returns a dictionary with the user id, name, firstname and lastname or None if he does not exist
+    """Get user object by name
+
+    Args:
+        name (str): The username of the user to get the object for
+
+    Returns:
+        a dictionary with the user id, name, firstname and lastname or None if he does not exist
     """
     cnx = db_connect()
     cursor = cnx.cursor()
@@ -357,11 +391,15 @@ def get_user(name):
 
 
 def add_position(user, x, y):
-    """Add new position for a given user\n
-    :param user: The user Object containing id, name, firstname and lastname
-    :param x: The new x coordinate
-    :param y: The new y coordinate\n
-    :return Returns A string and HTTP status code for answering the API request
+    """Add new position for a given user
+
+    Args:
+        user (object): The user Object containing id, name, firstname and lastname
+        x (float): The new x coordinate
+        y (float): The new y coordinate
+
+    Returns:
+        a string and HTTP status code for answering the API request
     """
     cnx = db_connect()
     cursor = cnx.cursor()
