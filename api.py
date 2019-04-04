@@ -1,11 +1,17 @@
-from flask_restful import Api, Resource, reqparse
-from flask import Flask
-import mysql.connector
 import datetime as dt
 import requests
 import json
+
+from flask_restful import Api, Resource, reqparse
+from flask import Flask
+import mysql.connector
 import mpu
 
+"""
+----------------------------------------
+| Written by Dominic Schmid 04.04.2018 |
+----------------------------------------
+"""
 
 app = Flask(__name__)
 api = Api(app)
@@ -66,8 +72,7 @@ class Weather(Resource):
         if place is None:
             place = "Athens,GR"
 
-        res = requests.get(
-            WEATHER_URL, {"q": place, "appid": WEATHER_KEY, "units": "metric"})
+        res = requests.get(WEATHER_URL, {"q": place, "appid": WEATHER_KEY, "units": "metric"})
 
         code = res.status_code
         res = res.json()  # Convert to JSON object to read data
@@ -83,8 +88,7 @@ class Weather(Resource):
                 "icon": res["weather"][0]["icon"],  # Image ID for png
                 "description": res["weather"][0]["description"]
             }
-        else:
-            return "Error: {}".format(res["message"]), res["cod"]
+        return "Error: {}".format(res["message"]), res["cod"]
 
 
 class Sites(Resource):
@@ -105,7 +109,7 @@ class Sites(Resource):
         :return Returns a json object of the list of sites within a given radius of the users position.
         """
 
-        if len(sites) == 0:  # If sites array is empty renew. This should really only happen atthe beginning
+        if not sites:  # If sites array is empty renew. This should really only happen atthe beginning
             renew_sites()
         # If called sites without arguments
         if x is None and y is None:
@@ -123,10 +127,9 @@ class Sites(Resource):
                 if args["name"].lower() in site["name"].lower():
                     new_sites.append(site)
 
-            if len(new_sites) > 0:
+            if new_sites:  # If array is not empty
                 return json.dumps(new_sites), 200
-            else:
-                return "Error: Site not found!", 404
+            return "Error: Site not found!", 404
 
         # Otherwise the request was for a radius calculation
         parser = reqparse.RequestParser()
@@ -142,16 +145,14 @@ class Sites(Resource):
         for site in sites:
             # Get distance in kilometers and check if site is inside radius
             distance = self.get_distance(site["x"], site["y"], x, y)
-            print(
-                "Distance between ({}/{}) and ({}/{}): {:.4f}km".format(site["x"], site["y"], x, y, distance))
+            print("Distance between ({}/{}) and ({}/{}): {:.4f}km".format(site["x"], site["y"], x, y, distance))
             if distance < radius:
                 site["distance"] = distance
                 sites_in_radius.append(site)
 
-        if len(sites_in_radius) > 0:
+        if sites_in_radius:
             return json.dumps(sites_in_radius, indent=4), 200
-        else:
-            return "No points of interest found within a radius of {}km".format(radius), 404
+        return "No points of interest found within a radius of {}km".format(radius), 404
 
 
 class Position(Resource):
@@ -196,8 +197,7 @@ class Route(Resource):
         :param end Coordinate in format x.xx,y.yy\n
         :return Returns the directions from A to B or Error 400
         """
-        res = requests.get(
-            MAPS_URL, {"api_key": MAPS_KEY, "start": start, "end": end})
+        res = requests.get(MAPS_URL, {"api_key": MAPS_KEY, "start": start, "end": end})
 
         if res.status_code == 200:
             res = res.json()
@@ -207,13 +207,17 @@ class Route(Resource):
                     json.dump(res, f, indent=4)
 
             return json.dumps(res, indent=4), 200
-        else:
-            return "Error: Route could not be calculated!\nError: {}".format(res.text), 400
+        return "Error: Route could not be calculated!\nError: {}".format(res.text), 400
 
 
 class AdminSite(Resource):
 
+    """Testing
+    """
+
     def post(self, name):
+        """Adds a new site with the specified parameters
+        """
         parser = reqparse.RequestParser()
         parser.add_argument("key")
         parser.add_argument("address")
@@ -270,9 +274,8 @@ def db_connect():
     """Connects to database\n
     :return Returns an instance of a MySQL Connection
     """
-    cnx = mysql.connector.connect(
-        user="root", password="mysql#5BT", host="localhost", database="python", auth_plugin="mysql_native_password")
-
+    cnx = mysql.connector.connect(user="root", password="mysql#5BT", host="localhost",
+                                  database="python", auth_plugin="mysql_native_password")
     return cnx
 
 
@@ -305,12 +308,11 @@ def get_last_position(name):
     mysql_f = "%Y-%m-%d %H:%M:%S"  # Format of MYSQL dates
 
     vals = (name,)  # Create tuple to prevent injection
-    cursor.execute(
-        "SELECT * FROM users JOIN positions ON users.u_id = positions.p_id WHERE kuerzel LIKE %s", vals)
+    cursor.execute("SELECT * FROM users JOIN positions ON users.u_id = positions.p_id WHERE kuerzel LIKE %s", vals)
 
     res = cursor.fetchall()
     cnx.close()  # Close due to resource leakage
-    if res is None or len(res) == 0:
+    if res is None or not res:
         return None
 
     entry = res[len(res) - 1]  # Get last position TODO check if this works
@@ -336,12 +338,11 @@ def get_user(name):
     cnx = db_connect()
     cursor = cnx.cursor()
 
-    cursor.execute(
-        "SELECT * FROM users WHERE kuerzel LIKE %s", (name,))
+    cursor.execute("SELECT * FROM users WHERE kuerzel LIKE %s", (name,))
 
     res = cursor.fetchall()
     cnx.close()  # Close due to resource leakage
-    if res is None or len(res) == 0:
+    if res is None or not res:
         return None
 
     # Get last entry TODO check if this works and if i need this
@@ -367,8 +368,7 @@ def add_position(user, x, y):
 
     try:
         vals = (user["id"], x, y, dt.datetime.now().strftime(DATE_FORMAT))
-        cursor.execute(
-            "INSERT INTO positions (p_uid, p_x, p_y, p_dt) VALUES (%s, %s, %s, %s)", vals)
+        cursor.execute("INSERT INTO positions (p_uid, p_x, p_y, p_dt) VALUES (%s, %s, %s, %s)", vals)
 
         cnx.commit()
         cnx.close()  # Close due to resource leakage
@@ -385,4 +385,6 @@ api.add_resource(Weather, "/weather",
 api.add_resource(Position, "/position/<string:name>")
 api.add_resource(Route, "/route/<string:start>/<string:end>")
 api.add_resource(AdminSite, "/site/<string:name>")
-app.run(debug=True) # TODO do not use run in a production environment, check function documentations
+# TODO do not use run in a production environment, check function documentations
+app.run(debug=True)
+# TODO change database to support image paths, change this code to support images too
