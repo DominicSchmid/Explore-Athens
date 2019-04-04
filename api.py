@@ -56,13 +56,13 @@ users = [
 
 class Weather(Resource):
 
-    """
-    GET Weather at certain place
-    :return Returns a dict of the current weather conditions in a specified palce
-    If place is not specified Athens,GR will be used
-    """
+    """Class for handling requests to /weather\n
+    Supports ``GET``, ``POST``"""
 
     def get(self, place=None):
+        """Get weather at certain place. If place is not specified 'Athens,GR' will be used by default\n
+        :return Returns a dict of the current weather conditions in a specified palce
+        """
         if place is None:
             place = "Athens,GR"
 
@@ -89,22 +89,22 @@ class Weather(Resource):
 
 class Sites(Resource):
 
-    """
-    Calculate the distance between two coordinates on a sphere
-    """
+    """Class for handling requests to /sites\n
+    Supports ``GET``"""
+
     @staticmethod
     def get_distance(lat1, lon1, lat2, lon2):
+        """Calculates the distance between two coordinates on a sphere"""
         return mpu.haversine_distance((lat1, lon1), (lat2, lon2))
 
-    """
-    Gets all sites or sites in a certain radius from a given coordinate
-    :param x: X coordinate of the user NOTE: Must be a float eg. 2.0
-    :param y: Y coordinate of the user NOTE: Must be a float eg. 2.0
-    :return Returns a json object of the list of sites within a given radius of the users position. Defaults to 5 kilometers
-    Radius: Radius (kilometers) in which sites should be added to the result array
-    """
-
     def get(self, x=None, y=None, radius=5):
+        """Gets all sites or sites in a certain radius from a given coordinate. Defaults to 5 kilometers.\n
+        :param x: X coordinate of the user NOTE: Must be a float eg. 2.0
+        :param y: Y coordinate of the user NOTE: Must be a float eg. 2.0
+        :param radius Radius (kilometers) in which sites should be added to the result array\n
+        :return Returns a json object of the list of sites within a given radius of the users position.
+        """
+
         if len(sites) == 0:  # If sites array is empty renew. This should really only happen atthe beginning
             renew_sites()
         # If called sites without arguments
@@ -156,22 +156,20 @@ class Sites(Resource):
 
 class Position(Resource):
 
-    """
-    Get position for Person
-    :return Returns a JSON Object of the user and his last position
-    """
+    """Class for handling requests to /position\n
+    Supports ``GET``, ``POST``"""
 
     def get(self, name):
+        """Get position for Person\n
+        :return Returns a JSON Object of the user and his last position
+        """
         position = get_last_position(name)
         if position is None:
             return "User '{}' does not exist or did not submit a position yet!".format(name), 404
         return json.dumps(position), 200
 
-    """
-    Write position to database under this name
-    """
-
     def post(self, name):
+        """Write position to database under this name"""
         parser = reqparse.RequestParser()
         parser.add_argument("x")
         parser.add_argument("y")
@@ -189,17 +187,15 @@ class Position(Resource):
 
 class Route(Resource):
 
-    """
-    Get Route from point a to point b by foot
-    :param start Coordinate in format x.xx,y.yy
-    :param end Coordinate in format x.xx,y.yy
-    :return Returns the directions from A to B or Error 400
-    """
+    """Class for handling requests to /route\n
+    Supports ``GET``"""
 
     def get(self, start, end, write_to_file=False):
-        #start = "8.681495,49.41461"
-        #end = "8.687872,49.420318"
-
+        """Get Route from point a to point b by foot\n
+        :param start Coordinate in format x.xx,y.yy
+        :param end Coordinate in format x.xx,y.yy\n
+        :return Returns the directions from A to B or Error 400
+        """
         res = requests.get(
             MAPS_URL, {"api_key": MAPS_KEY, "start": start, "end": end})
 
@@ -270,25 +266,18 @@ class AdminSite(Resource):
         return "Error: Site not found!", 404
 
 
-"""
-Connects to database
-:return Returns an instance of a MySQL Connection
-"""
-
-
 def db_connect():
+    """Connects to database\n
+    :return Returns an instance of a MySQL Connection
+    """
     cnx = mysql.connector.connect(
         user="root", password="mysql#5BT", host="localhost", database="python", auth_plugin="mysql_native_password")
 
     return cnx
 
 
-"""
-Updates site array with newest sites by fetching all from mysql database
-"""
-
-
 def renew_sites():
+    """Updates site array with newest sites by fetching all from mysql database"""
     cnx = db_connect()
     cursor = cnx.cursor()
     cursor.execute("SELECT * FROM sites")
@@ -307,13 +296,10 @@ def renew_sites():
     cnx.close()  # Close due to resource leakage
 
 
-"""
-Gets last known position of a user by name
-:return A dictionary of the user and the last known coordinates, together with a timestamp
-"""
-
-
 def get_last_position(name):
+    """Gets last known position of a user by name\n
+    :return A dictionary of the user and the last known coordinates, together with a timestamp
+    """
     cnx = db_connect()
     cursor = cnx.cursor()
     mysql_f = "%Y-%m-%d %H:%M:%S"  # Format of MYSQL dates
@@ -342,14 +328,11 @@ def get_last_position(name):
     }
 
 
-"""
-Get user object by name eg. stschdom
-:param name The username for a given user
-:return Returns a dictionary with the user id, name, firstname and lastname or None if he does not exist
-"""
-
-
 def get_user(name):
+    """Get user object by name eg. stschdom\n
+    :param name The username for a given user\n
+    :return Returns a dictionary with the user id, name, firstname and lastname or None if he does not exist
+    """
     cnx = db_connect()
     cursor = cnx.cursor()
 
@@ -372,16 +355,13 @@ def get_user(name):
     }
 
 
-"""
-Add new position for a given user
-:param user The user Object containing id, name, firstname and lastname
-:param x The new x coordinate
-:param y The new y coordinate
-:return Returns A string and HTTP status code for answering the API request
-"""
-
-
 def add_position(user, x, y):
+    """Add new position for a given user\n
+    :param user: The user Object containing id, name, firstname and lastname
+    :param x: The new x coordinate
+    :param y: The new y coordinate\n
+    :return Returns A string and HTTP status code for answering the API request
+    """
     cnx = db_connect()
     cursor = cnx.cursor()
 
@@ -405,4 +385,4 @@ api.add_resource(Weather, "/weather",
 api.add_resource(Position, "/position/<string:name>")
 api.add_resource(Route, "/route/<string:start>/<string:end>")
 api.add_resource(AdminSite, "/site/<string:name>")
-app.run(debug=True)
+app.run(debug=True) # TODO do not use run in a production environment, check function documentations
