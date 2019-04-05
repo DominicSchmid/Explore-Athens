@@ -3,14 +3,14 @@ import requests
 import json
 
 from flask_restful import Api, Resource, reqparse
-from flask import Flask
+from flask import Flask, send_from_directory
 import mysql.connector
 import mpu
 
 """
-----------------------------------------
-| Written by Dominic Schmid 04.04.2018 |
-----------------------------------------
+-------------------------------
+| Dominic Schmid - 05.04.2018 |
+-------------------------------
 """
 
 app = Flask(__name__)
@@ -25,6 +25,11 @@ ICON_URL = "http://openweathermap.org/img/w/"
 
 ADMIN_KEY = "12345"
 DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
+
+IMG_DIR = "/images"
+IMAGES = {
+    "file": "file.png"
+}
 
 # TODO query from db to select all sites and load them into the python program
 # NOTE on export bring dependencies!
@@ -78,7 +83,8 @@ class Weather(Resource):
         if place is None:
             place = "Athens,GR"
 
-        res = requests.get(WEATHER_URL, {"q": place, "appid": WEATHER_KEY, "units": "metric"})
+        res = requests.get(
+            WEATHER_URL, {"q": place, "appid": WEATHER_KEY, "units": "metric"})
 
         code = res.status_code
         res = res.json()  # Convert to JSON object to read data
@@ -154,7 +160,8 @@ class Sites(Resource):
         for site in sites:
             # Get distance in kilometers and check if site is inside radius
             distance = self.get_distance(site["x"], site["y"], x, y)
-            print("Distance between ({}/{}) and ({}/{}): {:.4f}km".format(site["x"], site["y"], x, y, distance))
+            print("Distance between ({}/{}) and ({}/{}): {:.4f}km".format(
+                site["x"], site["y"], x, y, distance))
             if distance < radius:
                 site["distance"] = distance
                 sites_in_radius.append(site)
@@ -222,7 +229,8 @@ class Route(Resource):
         Returns:
             a JSON object containing all the directions from A to B
         """
-        res = requests.get(MAPS_URL, {"api_key": MAPS_KEY, "start": start, "end": end})
+        res = requests.get(
+            MAPS_URL, {"api_key": MAPS_KEY, "start": start, "end": end})
 
         if res.status_code == 200:
             res = res.json()
@@ -233,6 +241,23 @@ class Route(Resource):
 
             return json.dumps(res, indent=4), 200
         return "Error: Route could not be calculated!\nError: {}".format(res.text), 400
+
+
+class Image(Resource):
+
+    """Class for handling requests to /image\n
+    Supports ``GET``"""
+
+    def get(self, path):
+        """Sends an image to the client
+
+        Args:
+            path (str): The name of the image to download
+
+        Returns:
+            a byte string or directly downloads a file if opened in the browser    
+        """
+        return send_from_directory(IMG_DIR, IMAGES[path], as_attachment=True)
 
 
 class AdminSite(Resource):
@@ -416,13 +441,12 @@ def add_position(user, x, y):
 
 
 # You must call as a float 2.0 or you will get a 404 error
-api.add_resource(
-    Sites, "/sites", "/sites/<float:x>/<float:y>", endpoint="sites")
-api.add_resource(Weather, "/weather",
-                 "/weather/<string:place>", endpoint="weather")
+api.add_resource(Sites, "/sites", "/sites/<float:x>/<float:y>", endpoint="sites")
+api.add_resource(Weather, "/weather", "/weather/<string:place>", endpoint="weather")
 api.add_resource(Position, "/position/<string:name>")
 api.add_resource(Route, "/route/<string:start>/<string:end>")
 api.add_resource(AdminSite, "/site/<string:name>")
+api.add_resource(Image, "/image/<string:path>.png")
 # TODO do not use run in a production environment, check function documentations
 app.run(debug=True)
 # TODO change database to support image paths, change this code to support images too

@@ -28,6 +28,9 @@ URL/position/<Dominic>?x=<20.234>&y=<24.111>
 Get route from coordinate position A to coordinate position B:
 URL/route/<24.2344,24.2313>/<13.3454,25.3>
 
+--- Image ---
+Get image by name to display weather icons (Call without .png or .jpg)
+URL/image/<file>
 
 --- Key mandatory calls ---
 Post new Site to database or update existing one (Should really do with put but we)
