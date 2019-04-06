@@ -116,7 +116,7 @@ class Sites(Resource):
     def get(self, x=None, y=None, radius=5):
         """Gets all sites or sites in a certain radius from a given coordinate. Defaults to 5 kilometers.\n
 
-        Args:    
+        Args:
             x (float): X coordinate of the user NOTE: Must be a float eg. 2.0
             y (float): Y coordinate of the user NOTE: Must be a float eg. 2.0
             radius (float): Radius (kilometers) in which sites should be added to the result array
@@ -134,7 +134,7 @@ class Sites(Resource):
 
             # If sites called and no name is given then return all sites
             if args["name"] is None:
-                return json.dumps(sites), 200
+                return sites, 200
 
             # Else return all sites with matching name substrings
             new_sites = []
@@ -143,7 +143,7 @@ class Sites(Resource):
                     new_sites.append(site)
 
             if new_sites:  # If array is not empty
-                return json.dumps(new_sites), 200
+                return new_sites, 200
             return "Error: Site not found!", 404
 
         # Otherwise the request was for a radius calculation
@@ -185,10 +185,7 @@ class Position(Resource):
         Returns:
             a JSON Object of the user and his last position
         """
-        position = get_last_position(name)
-        if position is None:
-            return "User '{}' does not exist or did not submit a position yet!".format(name), 404
-        return json.dumps(position), 200
+        return get_last_position(name)
 
     def post(self, name):
         """Writes position to database for the given name
@@ -223,7 +220,7 @@ class Route(Resource):
         """Get route from point A to point B by foot NOTE: Float params must be a float eg. 2.0
 
         Args:
-            start (float): Start position formatted as lat,lon 
+            start (float): Start position formatted as lat,lon
             end (float): End position formatted as lat,lon
 
         Returns:
@@ -239,8 +236,8 @@ class Route(Resource):
                 with open("dir.json", "w") as f:
                     json.dump(res, f, indent=4)
 
-            return json.dumps(res, indent=4), 200
-        return "Error: Route could not be calculated!\nError: {}".format(res.text), 400
+            return res, 200
+        return {"Error": "Route could not be calculated!", "Code": "{}".format(res.text)}, 400
 
 
 class Image(Resource):
@@ -255,7 +252,7 @@ class Image(Resource):
             path (str): The name of the image to download
 
         Returns:
-            a byte string or directly downloads a file if opened in the browser    
+            a byte string or directly downloads a file if opened in the browser
         """
         return send_from_directory(IMG_DIR, IMAGES[path], as_attachment=True)
 
@@ -358,8 +355,12 @@ def get_last_position(name):
     Returns:
         a dictionary of the user and the last known coordinates, together with a timestamp
     """
-    cnx = db_connect()
-    cursor = cnx.cursor()
+    try:
+        cnx = db_connect()
+        cursor = cnx.cursor()
+    except:
+        return 'Database error!', 405
+
     mysql_f = "%Y-%m-%d %H:%M:%S"  # Format of MYSQL dates
 
     vals = (name,)  # Create tuple to prevent injection
@@ -368,12 +369,12 @@ def get_last_position(name):
     res = cursor.fetchall()
     cnx.close()  # Close due to resource leakage
     if res is None or not res:
-        return None
+        return "User '{}' does not exist or did not submit a position yet!".format(name), 404
 
     entry = res[len(res) - 1]  # Get last position TODO check if this works
 
     if entry[6] is None or entry[7] is None:  # TODO check if i need to do this or if it worx
-        return "No poitions", 404
+        return "User '{}' did not submit any positions yet!".format(name), 404
 
     return {
         "kuerzel": entry[1],
@@ -382,7 +383,7 @@ def get_last_position(name):
         "x": entry[6],
         "y": entry[7],
         "dt": dt.datetime.strptime(str(entry[8]), mysql_f).strftime(DATE_FORMAT)
-    }
+    }, 200
 
 
 def get_user(name):
