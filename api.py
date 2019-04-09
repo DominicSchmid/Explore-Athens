@@ -25,7 +25,9 @@ FORECAST_URL = "https://api.openweathermap.org/data/2.5/forecast"
 ICON_URL = "http://openweathermap.org/img/w/"
 
 ADMIN_KEY = "12345"
-DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
+DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
+DATE_FORMAT = "%Y-%m-%d"
+TIME_FORMAT = "%H:%M:%S"
 
 IMG_DIR = "images"
 IMAGES = {
@@ -93,8 +95,8 @@ class WeatherNow(Resource):
         if code == 200:
             return {
                 "name": res["name"],
-                "date": dt.datetime.now().strftime("%x"),
-                "time": dt.datetime.now().strftime("%X"),
+                "date": get_date(),
+                "time": get_time(),
                 "min_temp": res["main"]["temp_min"],
                 "max_temp": res["main"]["temp_max"],
                 "temp": res["main"]["temp"],  # Temp in °C
@@ -133,8 +135,8 @@ class WeatherForecast(Resource):
             res_list = res["list"]
             forecast = {
                 "name": place,
-                "date": dt.datetime.now().strftime("%x"),
-                "time": dt.datetime.now().strftime("%X"),
+                "date": get_date(),
+                "time": get_time(),
                 "forecast": []
             }
 
@@ -215,7 +217,7 @@ class Sites(Resource):
                 site["distance"] = distance
                 sites_in_radius.append(site)
 
-        if sites_in_radius: # If array not empty
+        if sites_in_radius:  # If array not empty
             return json.dumps(sites_in_radius, indent=4), 200, {"content-type": "sites"}
         return {"error": "No points of interest found within a radius of {}km".format(radius)}, 404
 
@@ -434,7 +436,7 @@ def get_last_position(name):
         "nachname": entry[3],
         "x": entry[6],
         "y": entry[7],
-        "dt": dt.datetime.strptime(str(entry[8]), mysql_f).strftime(DATE_FORMAT)
+        "dt": dt.datetime.strptime(str(entry[8]), mysql_f).strftime(DATETIME_FORMAT)
     }, 200, {"content-type": "position"}
 
 
@@ -483,7 +485,7 @@ def add_position(user, x, y):
     cursor = cnx.cursor()
 
     try:
-        vals = (user["id"], x, y, dt.datetime.now().strftime(DATE_FORMAT))
+        vals = (user["id"], x, y, dt.datetime.now().strftime(DATETIME_FORMAT))
         cursor.execute("INSERT INTO positions (p_uid, p_x, p_y, p_dt) VALUES (%s, %s, %s, %s)", vals)
 
         cnx.commit()
@@ -491,6 +493,16 @@ def add_position(user, x, y):
         return {"success": "Position added successfully!"}, 201
     except:
         return {"error": "Syntax error inserting new position for {}!".format(user)}, 400
+
+
+def get_date():
+    """Get current date in a given format"""
+    return dt.datetime().now().strftime(DATE_FORMAT)
+
+
+def get_time():
+    """Get current time in a given format"""
+    return dt.datetime().now().strftime(TIME_FORMAT)
 
 
 # You must call as a float 2.0 or you will get a 404 error
