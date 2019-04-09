@@ -6,4 +6,4 @@ req = requests.get(URL + "/image/img.jpg", {"Content-Type": "multiplart/form-dat
 
 with open("recved.jpg", "wb") as f:
     # print(req.text)
-    f.write(req.text.encode())
+    f.write(req.content)

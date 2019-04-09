@@ -1,0 +1,16 @@
+[
+    {
+        "name": "Akropolis",
+        "address": "Max Mustermannstrasse 1",
+        "x": 37.9715326,
+        "y": 23.7257335,
+        "description": "Das ist die Akropolis"
+    },
+    {
+        "name": "Bonzata",
+        "address": "Max Sonnleiten 21",
+        "x": 37.9215326,
+        "y": 23.7557335,
+        "description": "Das ist ein anderes Point of Interest!"
+    }
+]

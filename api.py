@@ -21,14 +21,16 @@ MAPS_URL = "https://api.openrouteservice.org/v2/directions/foot-walking"
 
 WEATHER_KEY = "0a187d268a9951e269589ac49f41a67c"
 WEATHER_URL = "https://api.openweathermap.org/data/2.5/weather"
+FORECAST_URL = "https://api.openweathermap.org/data/2.5/forecast"
 ICON_URL = "http://openweathermap.org/img/w/"
 
 ADMIN_KEY = "12345"
 DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 
-IMG_DIR = "/images"
+IMG_DIR = "images"
 IMAGES = {
     "file": "file.png"
+    # TODO
 }
 
 # TODO query from db to select all sites and load them into the python program
@@ -65,10 +67,10 @@ users = [
 ]
 
 
-class Weather(Resource):
+class WeatherNow(Resource):
 
-    """Class for handling requests to /weather\n
-    Supports ``GET``, ``POST``"""
+    """Class for handling requests to /weather/now\n
+    Supports ``GET``"""
 
     def get(self, place=None):
         """Get weather at certain place.\n
@@ -78,7 +80,7 @@ class Weather(Resource):
             place (str): The location to get the weather for
 
         Returns:
-            a dict of the current weather conditions in a specified palce
+            a dict of the current weather conditions in a specified place
         """
         if place is None:
             place = "Athens,GR"
@@ -91,16 +93,63 @@ class Weather(Resource):
         if code == 200:
             return {
                 "name": res["name"],
-                "date": dt.datetime.now().strftime("%X"),
-                "time": dt.datetime.now().strftime("%x"),
+                "date": dt.datetime.now().strftime("%x"),
+                "time": dt.datetime.now().strftime("%X"),
                 "min_temp": res["main"]["temp_min"],
                 "max_temp": res["main"]["temp_max"],
                 "temp": res["main"]["temp"],  # Temp in °C
                 "humidity": res["main"]["humidity"],  # Percentage
                 "icon": res["weather"][0]["icon"],  # Image ID for png
                 "description": res["weather"][0]["description"]
+            }, 200, {"content-type": "weathernow"}
+        return {"error": "{}".format(res["message"])}, res["cod"]
+
+
+class WeatherForecast(Resource):
+
+    """Class for handling requests to /weather/forecast\n
+    Supports ``GET``"""
+
+    def get(self, place=None):
+        """Get weatherforecast at certain place.\n
+        If place is empty place defaults to 'Athens,GR'
+
+        Args:
+            place (str): The location to get the weatherforecast for
+
+        Returns:
+            a dict of the weatherforecast for a specified place
+        """
+        if place is None:
+            place = "Athens,GR"
+
+        res = requests.get(
+            FORECAST_URL, {"q": place, "appid": WEATHER_KEY, "units": "metric", "cnt": 4})  # 4 Tage
+
+        code = res.status_code
+        res = res.json()  # Convert to JSON object to read data
+
+        if code == 200:
+            res_list = res["list"]
+            forecast = {
+                "name": place,
+                "date": dt.datetime.now().strftime("%x"),
+                "time": dt.datetime.now().strftime("%X"),
+                "forecast": []
             }
-        return "Error: {}".format(res["message"]), res["cod"]
+
+            for f in res_list:
+                forecast["forecast"].append({
+                    "min_temp": f["main"]["temp_min"],
+                    "max_temp": f["main"]["temp_max"],
+                    "temp": f["main"]["temp"],  # Temp in °C
+                    "humidity": f["main"]["humidity"],  # Percentage
+                    "icon": f["weather"][0]["icon"],  # Image ID for png
+                    "description": f["weather"][0]["description"],
+                    "dt_txt": f["dt_txt"]
+                })
+            return forecast, 200, {"content-type": "weatherforecast"}
+        return {"error": "{}".format(res["message"])}, res["cod"]
 
 
 class Sites(Resource):
@@ -124,7 +173,7 @@ class Sites(Resource):
             a json object of the list of sites within a given radius of the users position.
         """
 
-        if not sites:  # If sites array is empty renew. This should really only happen atthe beginning
+        if not sites:  # If sites array is empty renew. This should really only happen at the beginning
             renew_sites()
         # If called sites without arguments
         if x is None and y is None:
@@ -134,7 +183,7 @@ class Sites(Resource):
 
             # If sites called and no name is given then return all sites
             if args["name"] is None:
-                return sites, 200
+                return sites, 200, {"content-type": "sites"}
 
             # Else return all sites with matching name substrings
             new_sites = []
@@ -143,8 +192,8 @@ class Sites(Resource):
                     new_sites.append(site)
 
             if new_sites:  # If array is not empty
-                return new_sites, 200
-            return "Error: Site not found!", 404
+                return new_sites, 200, {"content-type": "sites"}
+            return {"error": "Site not found!"}, 404
 
         # Otherwise the request was for a radius calculation
         parser = reqparse.RequestParser()
@@ -166,9 +215,9 @@ class Sites(Resource):
                 site["distance"] = distance
                 sites_in_radius.append(site)
 
-        if sites_in_radius:
-            return json.dumps(sites_in_radius, indent=4), 200
-        return "No points of interest found within a radius of {}km".format(radius), 404
+        if sites_in_radius: # If array not empty
+            return json.dumps(sites_in_radius, indent=4), 200, {"content-type": "sites"}
+        return {"error": "No points of interest found within a radius of {}km".format(radius)}, 404
 
 
 class Position(Resource):
@@ -202,11 +251,11 @@ class Position(Resource):
         args = parser.parse_args()
 
         if args["x"] is None and args["y"] is None:
-            return "No coordinates specified!", 400
+            return {"error": "No coordinates specified!"}, 400
 
         user = get_user(name)
         if user is None:
-            return "Error: User does not exist!", 404
+            return {"error": "User does not exist!"}, 404
         # TODO Maybe create user if not exists
         return add_position(user, args["x"], args["y"])
 
@@ -236,8 +285,8 @@ class Route(Resource):
                 with open("dir.json", "w") as f:
                     json.dump(res, f, indent=4)
 
-            return res, 200
-        return {"Error": "Route could not be calculated!", "Code": "{}".format(res.text)}, 400
+            return res, 200, {"content-type": "route"}
+        return {"error": "Route could not be calculated!", "Code": "{}".format(res.text)}, 400
 
 
 class Image(Resource):
@@ -254,7 +303,10 @@ class Image(Resource):
         Returns:
             a byte string or directly downloads a file if opened in the browser
         """
-        return send_from_directory(IMG_DIR, IMAGES[path], as_attachment=True)
+        try:
+            return send_from_directory(IMG_DIR, IMAGES[path], as_attachment=True), 200, {"content-type": "image"}
+        except:
+            return {"error": "Image not found"}, 404
 
 
 class AdminSite(Resource):
@@ -272,10 +324,10 @@ class AdminSite(Resource):
         args = parser.parse_args()
 
         if args["key"] != ADMIN_KEY:
-            return "Error: Invalid key!", 401
+            return {"error": "Invalid key!"}, 401
 
         if args["address"] is None or args["x"] is None or args["y"] is None or args["description"] is None:
-            return "Error: You must specify all variables!", 400
+            return {"error": "You must specify all variables!"}, 400
 
         for site in sites:
             if site["name"].lower() == name.lower():
@@ -303,16 +355,16 @@ class AdminSite(Resource):
         args = parser.parse_args()
 
         if args["key"] != ADMIN_KEY:
-            return "Error: Invalid key!", 401
+            return {"error": "Invalid key!"}, 401
 
         for site in sites:
             if site["name"].lower() == name.lower():
                 # TODO remove from database
                 print("Removed ", name)
 
-                return "Removed {}!".format(name), 200
+                return {"success": "Removed {}!".format(name)}, 200
 
-        return "Error: Site not found!", 404
+        return {"error": "Site not found!"}, 404
 
 
 def db_connect():
@@ -359,7 +411,7 @@ def get_last_position(name):
         cnx = db_connect()
         cursor = cnx.cursor()
     except:
-        return 'Database error!', 405
+        return {"error": 'Database error!'}, 405
 
     mysql_f = "%Y-%m-%d %H:%M:%S"  # Format of MYSQL dates
 
@@ -369,12 +421,12 @@ def get_last_position(name):
     res = cursor.fetchall()
     cnx.close()  # Close due to resource leakage
     if res is None or not res:
-        return "User '{}' does not exist or did not submit a position yet!".format(name), 404
+        return {"error": "User '{}' does not exist or did not submit a position yet!".format(name)}, 404
 
     entry = res[len(res) - 1]  # Get last position TODO check if this works
 
     if entry[6] is None or entry[7] is None:  # TODO check if i need to do this or if it worx
-        return "User '{}' did not submit any positions yet!".format(name), 404
+        return {"error": "User '{}' did not submit any positions yet!".format(name)}, 404
 
     return {
         "kuerzel": entry[1],
@@ -383,7 +435,7 @@ def get_last_position(name):
         "x": entry[6],
         "y": entry[7],
         "dt": dt.datetime.strptime(str(entry[8]), mysql_f).strftime(DATE_FORMAT)
-    }, 200
+    }, 200, {"content-type": "position"}
 
 
 def get_user(name):
@@ -418,7 +470,7 @@ def get_user(name):
 
 def add_position(user, x, y):
     """Add new position for a given user
-
+    TODO Des mochn die ondern
     Args:
         user (object): The user Object containing id, name, firstname and lastname
         x (float): The new x coordinate
@@ -436,14 +488,16 @@ def add_position(user, x, y):
 
         cnx.commit()
         cnx.close()  # Close due to resource leakage
-        return "Position added successfully!", 201
+        return {"success": "Position added successfully!"}, 201
     except:
-        return "Error: Syntax error inserting new position for {}!".format(user), 400
+        return {"error": "Syntax error inserting new position for {}!".format(user)}, 400
 
 
 # You must call as a float 2.0 or you will get a 404 error
-api.add_resource(Sites, "/sites", "/sites/<float:x>/<float:y>", endpoint="sites")
-api.add_resource(Weather, "/weather", "/weather/<string:place>", endpoint="weather")
+api.add_resource(Sites, "/sites", "/sites/<float:x>/<float:y>", "/sites/<int:x>/<int:y>", endpoint="sites")
+api.add_resource(WeatherNow, "/weather/now", "/weather/now/<string:place>", endpoint="weathernow")
+api.add_resource(WeatherForecast, "/weather/forecast",
+                 "/weather/forecast/<string:place>", endpoint="weatherforecast")  # TODO
 api.add_resource(Position, "/position/<string:name>")
 api.add_resource(Route, "/route/<string:start>/<string:end>")
 api.add_resource(AdminSite, "/site/<string:name>")

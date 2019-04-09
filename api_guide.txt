@@ -15,7 +15,10 @@ Get current weather in Athens:
 URL/weather
 
 Get current weather in specified place:
-URL/weather/<London,GB>
+URL/weather/now/<London,GB>
+
+Get 4 day weather forecast for specified place:
+URL/weather/forecast/<London,GB>
 
 --- Position ---
 Get last coordinate position of certain person:
