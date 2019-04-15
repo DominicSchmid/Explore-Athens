@@ -2,10 +2,11 @@ import datetime as dt
 import requests
 import json
 
-from flask_restful import Api, Resource, reqparse
-from flask import Flask, send_from_directory
+from flask_restful import Api, Resource, reqparse, abort, request
+from flask import Flask, send_from_directory, make_response
+import os
 import mysql.connector
-import mpu
+from mpu import haversine_distance
 
 """
 -------------------------------
@@ -13,8 +14,15 @@ import mpu
 -------------------------------
 """
 
+errors = {
+    'File not found': {
+        'message': 'File not found',
+        'status': 404
+    }
+}
+
 app = Flask(__name__)
-api = Api(app)
+api = Api(app, errors=errors, catch_all_404s=True)
 
 MAPS_KEY = "5b3ce3597851110001cf62482e2890bc9f8e432886b7708caecd04e2"
 MAPS_URL = "https://api.openrouteservice.org/v2/directions/foot-walking"
@@ -30,10 +38,7 @@ DATE_FORMAT = "%Y-%m-%d"
 TIME_FORMAT = "%H:%M:%S"
 
 IMG_DIR = "images"
-IMAGES = {
-    "file": "file.png"
-    # TODO
-}
+IMAGES = {}
 
 # TODO query from db to select all sites and load them into the python program
 # NOTE on export bring dependencies!
@@ -50,23 +55,42 @@ sites = [
         "address": "Max Mustermannstrasse 1",
         "x": 37.9715326,
         "y": 23.7257335,
-        "description": "Das ist die Akropolis"
+        "description": "Das ist die Akropolis",
+        "image": "empty"
     },
     {
         "name": "Bonzata",
         "address": "Max Sonnleiten 21",
         "x": 37.9215326,
         "y": 23.7557335,
-        "description": "Das ist ein anderes Point of Interest!"
+        "description": "Das ist ein anderes Point of Interest!",
+        "image": "empty"
     }
 ]
 
-users = [
-    {
-        "id": 1,
-        "name": "Dominic"
-    }
-]
+
+def read_config():
+    """Read the config file and initialize the variables"""
+    if os.path.exists("config.json"):
+        with open("config.json") as f:
+            config = json.load(f)
+
+    try:
+        MAPS_KEY = config["maps_key"]
+        MAPS_URL = config["maps_url"]
+        WEATHER_KEY = config["weather_key"]
+        WEATHER_URL = config["weather_url"]
+        FORECAST_URL = config["forecast_url"]
+        ICON_URL = config["icon_url"]
+        ADMIN_KEY = config["admin_key"]
+        DATETIME_FORMAT = config["datetime_format"]
+        DATE_FORMAT = config["date_format"]
+        TIME_FORMAT = config["time_format"]
+        IMG_DIR = config["img_dir"]
+        print("Read configuration successfully!")
+    except Exception as e:
+        print("Fatal error: 'config.json' was not found or has errors: {}".format(e))
+        exit(1)
 
 
 class WeatherNow(Resource):
@@ -97,14 +121,14 @@ class WeatherNow(Resource):
                 "name": res["name"],
                 "date": get_date(),
                 "time": get_time(),
-                "min_temp": res["main"]["temp_min"],
-                "max_temp": res["main"]["temp_max"],
-                "temp": res["main"]["temp"],  # Temp in °C
-                "humidity": res["main"]["humidity"],  # Percentage
+                "min_temp": float(res["main"]["temp_min"]),
+                "max_temp": float(res["main"]["temp_max"]),
+                "temp": float(res["main"]["temp"]),  # Temp in °C
+                "humidity": float(res["main"]["humidity"]),  # Percentage
                 "icon": res["weather"][0]["icon"],  # Image ID for png
                 "description": res["weather"][0]["description"]
-            }, 200, {"content-type": "weathernow"}
-        return {"error": "{}".format(res["message"])}, res["cod"]
+            }, 200, {"response-type": "weathernow"}
+        return {"message": "{}".format(res["message"])}, res["cod"]
 
 
 class WeatherForecast(Resource):
@@ -142,27 +166,22 @@ class WeatherForecast(Resource):
 
             for f in res_list:
                 forecast["forecast"].append({
-                    "min_temp": f["main"]["temp_min"],
-                    "max_temp": f["main"]["temp_max"],
-                    "temp": f["main"]["temp"],  # Temp in °C
-                    "humidity": f["main"]["humidity"],  # Percentage
+                    "min_temp": float(f["main"]["temp_min"]),
+                    "max_temp": float(f["main"]["temp_max"]),
+                    "temp": float(f["main"]["temp"]),  # Temp in °C
+                    "humidity": float(f["main"]["humidity"]),  # Percentage
                     "icon": f["weather"][0]["icon"],  # Image ID for png
                     "description": f["weather"][0]["description"],
                     "dt_txt": f["dt_txt"]
                 })
-            return forecast, 200, {"content-type": "weatherforecast"}
-        return {"error": "{}".format(res["message"])}, res["cod"]
+            return forecast, 200, {"response-type": "weatherforecast"}
+        return {"message": "{}".format(res["message"])}, res["cod"]
 
 
 class Sites(Resource):
 
     """Class for handling requests to /sites\n
     Supports ``GET``"""
-
-    @staticmethod
-    def get_distance(lat1, lon1, lat2, lon2):
-        """Calculates the distance between two coordinates on a sphere"""
-        return mpu.haversine_distance((lat1, lon1), (lat2, lon2))
 
     def get(self, x=None, y=None, radius=5):
         """Gets all sites or sites in a certain radius from a given coordinate. Defaults to 5 kilometers.\n
@@ -185,7 +204,7 @@ class Sites(Resource):
 
             # If sites called and no name is given then return all sites
             if args["name"] is None:
-                return sites, 200, {"content-type": "sites"}
+                return sites, 200, {"response-type": "sites"}
 
             # Else return all sites with matching name substrings
             new_sites = []
@@ -194,8 +213,8 @@ class Sites(Resource):
                     new_sites.append(site)
 
             if new_sites:  # If array is not empty
-                return new_sites, 200, {"content-type": "sites"}
-            return {"error": "Site not found!"}, 404
+                return new_sites, 200, {"response-type": "sites"}
+            return {"message": "Site not found!"}, 404
 
         # Otherwise the request was for a radius calculation
         parser = reqparse.RequestParser()
@@ -210,7 +229,7 @@ class Sites(Resource):
 
         for site in sites:
             # Get distance in kilometers and check if site is inside radius
-            distance = self.get_distance(site["x"], site["y"], x, y)
+            distance = haversine_distance((site["x"], site["y"]), (x, y))
             print("Distance between ({}/{}) and ({}/{}): {:.4f}km".format(
                 site["x"], site["y"], x, y, distance))
             if distance < radius:
@@ -218,28 +237,17 @@ class Sites(Resource):
                 sites_in_radius.append(site)
 
         if sites_in_radius:  # If array not empty
-            return json.dumps(sites_in_radius, indent=4), 200, {"content-type": "sites"}
-        return {"error": "No points of interest found within a radius of {}km".format(radius)}, 404
+            return json.dumps(sites_in_radius, indent=4), 200, {"response-type": "sites"}
+        return {"message": "No points of interest found within a {}km radius of {}/{}".format(radius, x, y)}, 404
 
 
 class Position(Resource):
 
     """Class for handling requests to /position\n
-    Supports ``GET``, ``POST``"""
+    Supports ``POST``"""
 
-    def get(self, name):
-        """Gets last known position for given person
-
-        Args:
-            name (str): The name of the person to get the last position for
-
-        Returns:
-            a JSON Object of the user and his last position
-        """
-        return get_last_position(name)
-
-    def post(self, name):
-        """Writes position to database for the given name
+    def post(self, uid):
+        """Writes position to remote database for the given name
 
         Args:
             name (str): The name of the person to write the new position for
@@ -253,13 +261,9 @@ class Position(Resource):
         args = parser.parse_args()
 
         if args["x"] is None and args["y"] is None:
-            return {"error": "No coordinates specified!"}, 400
+            return {"message": "No coordinates specified!"}, 400
 
-        user = get_user(name)
-        if user is None:
-            return {"error": "User does not exist!"}, 404
-        # TODO Maybe create user if not exists
-        return add_position(user, args["x"], args["y"])
+        return add_position(uid, args["x"], args["y"])
 
 
 class Route(Resource):
@@ -287,8 +291,8 @@ class Route(Resource):
                 with open("dir.json", "w") as f:
                     json.dump(res, f, indent=4)
 
-            return res, 200, {"content-type": "route"}
-        return {"error": "Route could not be calculated!", "Code": "{}".format(res.text)}, 400
+            return res, 200, {"response-type": "route"}
+        return {"message": "Route could not be calculated!", "Code": "{}".format(res.text)}, 400
 
 
 class Image(Resource):
@@ -306,9 +310,15 @@ class Image(Resource):
             a byte string or directly downloads a file if opened in the browser
         """
         try:
-            return send_from_directory(IMG_DIR, IMAGES[path], as_attachment=True), 200, {"content-type": "image"}
-        except:
-            return {"error": "Image not found"}, 404
+            extension = os.path.splitext(IMAGES[path])[1]
+            response = make_response(send_from_directory(IMG_DIR, IMAGES[path], as_attachment=True))
+            response.headers["response-type"] = "image"
+            response.headers["filename"] = IMAGES[path]
+            response.status_code = 200
+            return response
+            # return send_from_directory(IMG_DIR, IMAGES[path], as_attachment=True), 200, {"response-type": "image", "extension": extension}
+        except Exception as e:
+            return {"message": "Image not found"}, 404
 
 
 class AdminSite(Resource):
@@ -326,10 +336,10 @@ class AdminSite(Resource):
         args = parser.parse_args()
 
         if args["key"] != ADMIN_KEY:
-            return {"error": "Invalid key!"}, 401
+            return {"message": "Invalid key!"}, 401
 
         if args["address"] is None or args["x"] is None or args["y"] is None or args["description"] is None:
-            return {"error": "You must specify all variables!"}, 400
+            return {"message": "You must specify all variables!"}, 400
 
         for site in sites:
             if site["name"].lower() == name.lower():
@@ -357,7 +367,7 @@ class AdminSite(Resource):
         args = parser.parse_args()
 
         if args["key"] != ADMIN_KEY:
-            return {"error": "Invalid key!"}, 401
+            return {"message": "Invalid key!"}, 401
 
         for site in sites:
             if site["name"].lower() == name.lower():
@@ -366,7 +376,7 @@ class AdminSite(Resource):
 
                 return {"success": "Removed {}!".format(name)}, 200
 
-        return {"error": "Site not found!"}, 404
+        return {"message": "Site not found!"}, 404
 
 
 def db_connect():
@@ -395,125 +405,69 @@ def renew_sites():
             "address": entry[2],
             "x": entry[3],
             "y": entry[4],
-            "description": entry[5]
+            "description": entry[5],
+            "image": entry[6]
         })
     cnx.close()  # Close due to resource leakage
 
 
-def get_last_position(name):
-    """Gets last known position of a user by name
+def renew_images():
+    """Updates image key values
 
-    Args:
-        name (str): The user to get the last known position for
+    Example:
+        /image/akropolis will look for akropolis.png"""
+    renew_sites()
 
-    Returns:
-        a dictionary of the user and the last known coordinates, together with a timestamp
-    """
-    try:
-        cnx = db_connect()
-        cursor = cnx.cursor()
-    except:
-        return {"error": 'Database error!'}, 405
-
-    mysql_f = "%Y-%m-%d %H:%M:%S"  # Format of MYSQL dates
-
-    vals = (name,)  # Create tuple to prevent injection
-    cursor.execute("SELECT * FROM users JOIN positions ON users.u_id = positions.p_id WHERE kuerzel LIKE %s", vals)
-
-    res = cursor.fetchall()
-    cnx.close()  # Close due to resource leakage
-    if res is None or not res:
-        return {"error": "User '{}' does not exist or did not submit a position yet!".format(name)}, 404
-
-    entry = res[len(res) - 1]  # Get last position TODO check if this works
-
-    if entry[6] is None or entry[7] is None:  # TODO check if i need to do this or if it worx
-        return {"error": "User '{}' did not submit any positions yet!".format(name)}, 404
-
-    return {
-        "kuerzel": entry[1],
-        "vorname": entry[2],
-        "nachname": entry[3],
-        "x": entry[6],
-        "y": entry[7],
-        "dt": dt.datetime.strptime(str(entry[8]), mysql_f).strftime(DATETIME_FORMAT)
-    }, 200, {"content-type": "position"}
-
-
-def get_user(name):
-    """Get user object by name
-
-    Args:
-        name (str): The username of the user to get the object for
-
-    Returns:
-        a dictionary with the user id, name, firstname and lastname or None if he does not exist
-    """
-    cnx = db_connect()
-    cursor = cnx.cursor()
-
-    cursor.execute("SELECT * FROM users WHERE kuerzel LIKE %s", (name,))
-
-    res = cursor.fetchall()
-    cnx.close()  # Close due to resource leakage
-    if res is None or not res:
-        return None
-
-    # Get last entry TODO check if this works and if i need this
-    entry = res[len(res) - 1]
-
-    return {
-        "id": entry[0],
-        "kuerzel": entry[1],
-        "vorname": entry[2],
-        "nachname": entry[3]
-    }
+    for s in sites:
+        IMAGES[s["name"]] = s["image"]
 
 
 def add_position(user, x, y):
-    """Add new position for a given user
-    TODO Des mochn die ondern
+    """Add new position for a given user to the database made by another group
     Args:
-        user (object): The user Object containing id, name, firstname and lastname
+        user (string): The android ID of the person
         x (float): The new x coordinate
         y (float): The new y coordinate
 
     Returns:
         a string and HTTP status code for answering the API request
     """
-    cnx = db_connect()
-    cursor = cnx.cursor()
-
     try:
-        vals = (user["id"], x, y, dt.datetime.now().strftime(DATETIME_FORMAT))
-        cursor.execute("INSERT INTO positions (p_uid, p_x, p_y, p_dt) VALUES (%s, %s, %s, %s)", vals)
+        standort_url = "185.5.199.33:5051/addLocation"
+        res = requests.post("{}/{}/{}/{}".format(standort_url, user, x, y))
 
-        cnx.commit()
-        cnx.close()  # Close due to resource leakage
-        return {"success": "Position added successfully!"}, 201
+        if res.status_code == 200:
+            return {"success": "Position added successfully!"}, 201
+        else:
+            return {"message": res.content()}, res.status_code
     except:
-        return {"error": "Syntax error inserting new position for {}!".format(user)}, 400
+        return {"message": "Syntax error inserting new position for {}!".format(user)}, 400
 
 
 def get_date():
     """Get current date in a given format"""
-    return dt.datetime().now().strftime(DATE_FORMAT)
+    return dt.datetime.now().strftime(DATE_FORMAT)
 
 
 def get_time():
     """Get current time in a given format"""
-    return dt.datetime().now().strftime(TIME_FORMAT)
+    return dt.datetime.now().strftime(TIME_FORMAT)
 
 
 # You must call as a float 2.0 or you will get a 404 error
 api.add_resource(Sites, "/sites", "/sites/<float:x>/<float:y>", "/sites/<int:x>/<int:y>", endpoint="sites")
 api.add_resource(WeatherNow, "/weather/now", "/weather/now/<string:place>", endpoint="weathernow")
 api.add_resource(WeatherForecast, "/weather/forecast",
-                 "/weather/forecast/<string:place>", endpoint="weatherforecast")  # TODO
-api.add_resource(Position, "/position/<string:name>")
+                 "/weather/forecast/<string:place>", endpoint="weatherforecast")
+api.add_resource(Position, "/position/<string:uid>")
 api.add_resource(Route, "/route/<string:start>/<string:end>")
 api.add_resource(AdminSite, "/site/<string:name>")
-api.add_resource(Image, "/image/<string:path>.png")
-# TODO do not use run in a production environment, check function documentations
+api.add_resource(Image, "/image/<string:path>")
+
+
+read_config()
+renew_images()
+
 app.run(debug=True)
-# TODO change database to support image paths, change this code to support images too
+# TODO change database to support image paths, change this code to send image paths in response
+# TODO do not use run in a production environment, check function documentations

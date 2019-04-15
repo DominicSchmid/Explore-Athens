@@ -1,0 +1,13 @@
+{
+    "maps_key": "5b3ce3597851110001cf62482e2890bc9f8e432886b7708caecd04e2",
+    "maps_url": "https://api.openrouteservice.org/v2/directions/foot-walking",
+    "weather_key": "0a187d268a9951e269589ac49f41a67c",
+    "weather_url": "https://api.openweathermap.org/data/2.5/weather",
+    "forecast_url": "https://api.openweathermap.org/data/2.5/forecast",
+    "icon_url": "http://openweathermap.org/img/w/",
+    "admin_key": "12345",
+    "datetime_format": "%Y-%m-%d %H:%M:%S",
+    "date_format": "%Y-%m-%d",
+    "time_format": "%H:%M:%S",
+    "img_dir": "images"
+}

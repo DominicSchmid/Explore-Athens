@@ -1,0 +1,43 @@
+{
+    "name": "Athens,GR",
+    "date": "2019-04-10",
+    "time": "07:47:57",
+    "forecast": [
+        {
+            "min_temp": 14.68,
+            "max_temp": 15.88,
+            "temp": 14.68,
+            "humidity": 76,
+            "icon": "01d",
+            "description": "clear sky",
+            "dt_txt": "2019-04-10 06:00:00"
+        },
+        {
+            "min_temp": 17.13,
+            "max_temp": 18.03,
+            "temp": 17.13,
+            "humidity": 71,
+            "icon": "01d",
+            "description": "clear sky",
+            "dt_txt": "2019-04-10 09:00:00"
+        },
+        {
+            "min_temp": 17.84,
+            "max_temp": 18.45,
+            "temp": 17.84,
+            "humidity": 73,
+            "icon": "10d",
+            "description": "light rain",
+            "dt_txt": "2019-04-10 12:00:00"
+        },
+        {
+            "min_temp": 18.8,
+            "max_temp": 19.1,
+            "temp": 18.8,
+            "humidity": 64,
+            "icon": "10d",
+            "description": "light rain",
+            "dt_txt": "2019-04-10 15:00:00"
+        }
+    ]
+}

@@ -1,10 +1,10 @@
 {
     "name": "Athens",
-    "date": "04/09/19",
-    "time": "12:58:05",
-    "min_temp": 13.33,
-    "max_temp": 17.78,
-    "temp": 16.02,
+    "date": "2019-04-09",
+    "time": "17:19:20",
+    "min_temp": 12.78,
+    "max_temp": 16.11,
+    "temp": 14.83,
     "humidity": 51,
     "icon": "04d",
     "description": "broken clouds"
