@@ -196,6 +196,7 @@ class Sites(Resource):
 
         if not sites:  # If sites array is empty renew. This should really only happen at the beginning
             renew_sites()
+            print("Sites renewed")
         # If called sites without arguments
         if x is None and y is None:
             parser = reqparse.RequestParser()
@@ -230,14 +231,14 @@ class Sites(Resource):
         for site in sites:
             # Get distance in kilometers and check if site is inside radius
             distance = haversine_distance((site["x"], site["y"]), (x, y))
-            print("Distance between ({}/{}) and ({}/{}): {:.4f}km".format(
-                site["x"], site["y"], x, y, distance))
+            # print("Distance between ({}/{}) and ({}/{}): {:.4f}km".format(
+            #    site["x"], site["y"], x, y, distance))
             if distance < radius:
                 site["distance"] = distance
                 sites_in_radius.append(site)
 
         if sites_in_radius:  # If array not empty
-            return json.dumps(sites_in_radius, indent=4), 200, {"response-type": "sites"}
+            return sites_in_radius, 200, {"response-type": "sites"}
         return {"message": "No points of interest found within a {}km radius of {}/{}".format(radius, x, y)}, 404
 
 
@@ -441,7 +442,7 @@ def add_position(user, x, y):
         else:
             return {"message": res.content()}, res.status_code
     except:
-        return {"message": "Syntax error inserting new position for {}!".format(user)}, 400
+        return {"message": "Syntax error inserting new position for {}!".format(user), "error": res.content()}, 400
 
 
 def get_date():
