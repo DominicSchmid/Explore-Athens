@@ -4,143 +4,127 @@
         "address": "Athen 105 58",
         "x": 37.971536,
         "y": 23.7257316,
-        "description": "Die Akropolis in Athen ist wohl das bekannteste Bauwerk des antiken Griechenlands. Diese einzigartigen Geb\u00e4ude wurden zwischen 464 v. Chr und 406 v. Chr auf einem 156 Meter hohen Felsen erbaut. Zu den Geb\u00e4uden geh\u00f6ren, das Erechtheion, der Niketempel, die Propyl\u00e4en und der Parthenon-Tempel, in dem eine Statue der G\u00f6ttin Athene gestanden haben soll. Eine Akropolis war in der Antike zumeist eine auf dem h\u00f6chsten Teil der Stadt gelegene Befestigung. Auch die Akropolis von Athen hatte zun\u00e4chst vorrangig eine Verteidigungsfunktion inne.",
-        "image": "Akropolis1.jpg",
-        "distance": 1.0127911251603643
+        "description": "Die Akropolis in Athen ist wohl das bekannteste Bauwerk des antiken Griechenlands. Diese einzigartigen Gebäude wurden zwischen 464 v. Chr und 406 v. Chr auf einem 156 Meter hohen Felsen erbaut. Zu den Gebäuden gehören, das Erechtheion, der Niketempel, die Propyläen und der Parthenon-Tempel, in dem eine Statue der Göttin Athene gestanden haben soll. Eine Akropolis war in der Antike zumeist eine auf dem höchsten Teil der Stadt gelegene Befestigung. Auch die Akropolis von Athen hatte zunächst vorrangig eine Verteidigungsfunktion inne.",
+        "image": "akropolis1.jpg"
     },
     {
         "name": "Parthenon",
         "address": "Athen 105 58",
         "x": 37.9715202,
         "y": 23.726709,
-        "description": "Der prachtvolle Parthenon ist der zentrale Tempel der Akropolis in der griechischen Hauptstadt Athen und eines der bekanntesten Bauwerke der Welt. Einige Originalteile wurden entfernt und sind heute im Akropolis-Museum zu besichtigen. Der Parthenon ist der Haupttempel der Akropolis in der griechischen Hauptstadt Athen und befindet sich seit fast 2.500 Jahren im Zentrum der prachtvollen Tempelanlage. Der s\u00e4ulenbew\u00e4hrte Tempel z\u00e4hlt zu den bekanntesten Bauwerken der Welt. Gemeinsam mit dem Gesamtkomplex der Akropolis ist er Teil des UNESCO-Weltkulturerbes",
-        "image": "Parthenon1.jpg",
-        "distance": 0.9860481423938344
+        "description": "Der prachtvolle Parthenon ist der zentrale Tempel der Akropolis in der griechischen Hauptstadt Athen und eines der bekanntesten Bauwerke der Welt. Einige Originalteile wurden entfernt und sind heute im Akropolis-Museum zu besichtigen. Der Parthenon ist der Haupttempel der Akropolis in der griechischen Hauptstadt Athen und befindet sich seit fast 2.500 Jahren im Zentrum der prachtvollen Tempelanlage. Der säulenbewährte Tempel zählt zu den bekanntesten Bauwerken der Welt. Gemeinsam mit dem Gesamtkomplex der Akropolis ist er Teil des UNESCO-Weltkulturerbes",
+        "image": "parthenon1.jpg"
     },
     {
         "name": "Olympieion",
         "address": "Athen 105 57",
         "x": 37.9692945,
         "y": 23.7330792,
-        "description": "Das Olympieion (auch Tempel des Olympischen Zeus) in Athen war der gr\u00f6\u00dfte Tempel im antiken Griechenland. Der Bau geht auf das 6. Jahrhundert v. Chr. zur\u00fcck, wurde aber erst unter dem r\u00f6mischen Kaiser Hadrian im 2. Jahrhundert vollendet. Das Olympieion befindet sich rund 500 m \u00f6stlich der Akropolis. Das Olympieion war ein korinthischer Dipteros. Mit einer Grundfl\u00e4che von 108 x 41 Metern war er mehr als doppelt so gro\u00df wie der Parthenon. Urspr\u00fcnglich besa\u00df das Olympieion 104 \u00fcber 17 m hohe korinthische S\u00e4ulen, von denen heute 15 wieder aufgerichtet sind.",
-        "image": "Olympieion1.jpg",
-        "distance": 1.220611506352172
+        "description": "Das Olympieion (auch Tempel des Olympischen Zeus) in Athen war der größte Tempel im antiken Griechenland. Der Bau geht auf das 6. Jahrhundert v. Chr. zurück, wurde aber erst unter dem römischen Kaiser Hadrian im 2. Jahrhundert vollendet. Das Olympieion befindet sich rund 500 m östlich der Akropolis. Das Olympieion war ein korinthischer Dipteros. Mit einer Grundfläche von 108 x 41 Metern war er mehr als doppelt so groß wie der Parthenon. Ursprünglich besaß das Olympieion 104 über 17 m hohe korinthische Säulen, von denen heute 15 wieder aufgerichtet sind.",
+        "image": "olympieion1.jpg"
     },
     {
         "name": "Plaka",
         "address": "Plaka",
         "x": 37.9724132,
         "y": 23.7300487,
-        "description": "Das Olympieion (auch Tempel des Olympischen Zeus) in Athen war der gr\u00f6\u00dfte Tempel im antiken Griechenland. Der Bau geht auf das 6. Jahrhundert v. Chr. zur\u00fcck, wurde aber erst unter dem r\u00f6mischen Kaiser Hadrian im 2. Jahrhundert vollendet. Das Olympieion befindet sich rund 500 m \u00f6stlich der Akropolis. Das Olympieion war ein korinthischer Dipteros. Mit einer Grundfl\u00e4che von 108 x 41 Metern war er mehr als doppelt so gro\u00df wie der Parthenon. Urspr\u00fcnglich besa\u00df das Olympieion 104 \u00fcber 17 m hohe korinthische S\u00e4ulen, von denen heute 15 wieder aufgerichtet sind.",
-        "image": "Plaka1.jpg",
-        "distance": 0.8436244688129119
+        "description": "Das Olympieion (auch Tempel des Olympischen Zeus) in Athen war der größte Tempel im antiken Griechenland. Der Bau geht auf das 6. Jahrhundert v. Chr. zurück, wurde aber erst unter dem römischen Kaiser Hadrian im 2. Jahrhundert vollendet. Das Olympieion befindet sich rund 500 m östlich der Akropolis. Das Olympieion war ein korinthischer Dipteros. Mit einer Grundfläche von 108 x 41 Metern war er mehr als doppelt so groß wie der Parthenon. Ursprünglich besaß das Olympieion 104 über 17 m hohe korinthische Säulen, von denen heute 15 wieder aufgerichtet sind.",
+        "image": "plaka1.jpg"
     },
     {
         "name": "Syntagma-Platz",
         "address": "Pl. Sintagmatos, Athen 105 63",
         "x": 37.9755383,
         "y": 23.7348455,
-        "description": "Der Syntagma-Platz ist der bedeutendste Platz Athens; er ist st\u00e4ndig gef\u00fcllt mit Anwohnern und Touristen gleicherma\u00dfen. Der Platz grenzt an seiner \u00f6stlichen Seite an das Hellenische Parlamentsgeb\u00e4ude an, welches urspr\u00fcnglich der k\u00f6nigliche Palast. Er ist Dreh- und Angelpunkt der \u00f6ffentlichen Verkehrsmittel der Stadt - Busse, Stra\u00dfenbahnen und auch die Metro halten hier. Der Platz ist mit einem zentralen Wasserspiel, mehreren Statuen und zwei Grasfl\u00e4chen mit vielen B\u00e4umen geschm\u00fcckt, die perfekt zum Entspannen im Schatten geeignet sind.",
-        "image": "Syntagma-Platz1.jpg",
-        "distance": 0.6530756143455422
+        "description": "Der Syntagma-Platz ist der bedeutendste Platz Athens; er ist ständig gefüllt mit Anwohnern und Touristen gleichermaßen. Der Platz grenzt an seiner östlichen Seite an das Hellenische Parlamentsgebäude an, welches ursprünglich der königliche Palast. Er ist Dreh- und Angelpunkt der öffentlichen Verkehrsmittel der Stadt - Busse, Straßenbahnen und auch die Metro halten hier. Der Platz ist mit einem zentralen Wasserspiel, mehreren Statuen und zwei Grasflächen mit vielen Bäumen geschmückt, die perfekt zum Entspannen im Schatten geeignet sind.",
+        "image": "syntagma_platz1.jpg"
     },
     {
         "name": "Agora",
         "address": "Adrianou 24, Athen 105 55",
         "x": 37.9746468,
         "y": 23.7219594,
-        "description": "Die Agora war das gesch\u00e4ftliche, soziale und politische Herzst\u00fcck des antiken Athen. Sie war das Zentrum des Alltags \u2013 hierher kamen die Menschen zum Einkaufen, zur Unterhaltung und zu sozialen Aktivit\u00e4ten. Die Ausgrabungen begannen im fr\u00fchen 20. Jahrhundert und enth\u00fcllten eine Vielzahl von Tempeln, Stoen, Altaren und sogar einen Konzertsaal. Gerichte tagten hier, und Philosophen sprachen vor den Menschen, die hier einkauften und \u00fcber die Neuigkeiten des Tages diskutierten. Auch Schulen und Sporteinrichtungen standen zur Verf\u00fcgung.",
-        "image": "Agora.jpg",
-        "distance": 0.9224989785735025
+        "description": "Die Agora war das geschäftliche, soziale und politische Herzstück des antiken Athen. Sie war das Zentrum des Alltags – hierher kamen die Menschen zum Einkaufen, zur Unterhaltung und zu sozialen Aktivitäten. Die Ausgrabungen begannen im frühen 20. Jahrhundert und enthüllten eine Vielzahl von Tempeln, Stoen, Altaren und sogar einen Konzertsaal. Gerichte tagten hier, und Philosophen sprachen vor den Menschen, die hier einkauften und über die Neuigkeiten des Tages diskutierten. Auch Schulen und Sporteinrichtungen standen zur Verfügung.",
+        "image": "agora1.jpg"
     },
     {
         "name": "Erechtheion",
         "address": "Athen 105 58",
         "x": 37.9720758,
         "y": 23.7265143,
-        "description": "Das Erechtheion entstand lange nach Errichtung der Propyl\u00e4en und des Parthenon in der Zeit von 421 bis 406 v. Chr. Wie beim Tempel der Athena forderte die unebene Struktur des Bodens eine aufw\u00e4ndige Konstruktion auf zwei Ebenen. Dass Not aber erfinderisch macht, beweist die meisterliche \u00c4sthetik einer Gestaltungform, die in der Antike Ihresgleichen sucht. Analog zu den Propyl\u00e4en entsprach aber auch die Ausf\u00fchrung des Erechtheion in ihrer Vollendung nicht der urspr\u00fcnglichen Planung.",
-        "image": "Erechtheion.jpg",
-        "distance": 0.932597464108743
+        "description": "Das Erechtheion entstand lange nach Errichtung der Propyläen und des Parthenon in der Zeit von 421 bis 406 v. Chr. Wie beim Tempel der Athena forderte die unebene Struktur des Bodens eine aufwändige Konstruktion auf zwei Ebenen. Dass Not aber erfinderisch macht, beweist die meisterliche Ästhetik einer Gestaltungform, die in der Antike Ihresgleichen sucht. Analog zu den Propyläen entsprach aber auch die Ausführung des Erechtheion in ihrer Vollendung nicht der ursprünglichen Planung.",
+        "image": "erechtheion1.jpg"
     },
     {
         "name": "Lycabettus",
         "address": "Lykabettus",
         "x": 37.9818057,
         "y": 23.7430266,
-        "description": "Der Lycabettus ist der Stadtberg Athens und mit 277 Metern die h\u00f6chste Erhebung in der Stadt. Von hier kann man alle Sehensw\u00fcrdigkeiten von oben sehen und du begreift die Ausmasse von Athen erst so richtig. Die Stadt mutet n\u00e4mlich nicht so gross an, wenn man mitten drin steckt, als wenn man \u00fcber sie hinwegsehen kann und das bis zum Meer. Die Aussicht hier ist einfach fantastisch und unvergleichlich. Auf dem Gipfel findet man eine kleine Kapelle, ein eher teureres Restaurant und eine Aussichtsplattform. Interessanterweise ist der Lycabettus aber nicht so von Touristen \u00fcberlaufen wie andere Sehensw\u00fcrdigkeiten.",
-        "image": "Lycabettus.jpg",
-        "distance": 1.1592449672578318
+        "description": "Der Lycabettus ist der Stadtberg Athens und mit 277 Metern die höchste Erhebung in der Stadt. Von hier kann man alle Sehenswürdigkeiten von oben sehen und du begreift die Ausmasse von Athen erst so richtig. Die Stadt mutet nämlich nicht so gross an, wenn man mitten drin steckt, als wenn man über sie hinwegsehen kann und das bis zum Meer. Die Aussicht hier ist einfach fantastisch und unvergleichlich. Auf dem Gipfel findet man eine kleine Kapelle, ein eher teureres Restaurant und eine Aussichtsplattform. Interessanterweise ist der Lycabettus aber nicht so von Touristen überlaufen wie andere Sehenswürdigkeiten.",
+        "image": "lycabettus1.jpg"
     },
     {
         "name": "Odeon des Herodes Atticus",
         "address": "Areopagitou Dionisiou, Athen 105 55",
         "x": 37.970798,
         "y": 23.7245708,
-        "description": "Herodes Atticus war ein aristokratischer und wohlhabender Grieche, der mehrere gro\u00dfe Bauprojekte im alten Athen finanzierte, darunter das Odeon, das er 161 v. Chr. in Gedenken an seine Frau in Auftrag gab. Das Odeon befindet sich am Fu\u00dfe der s\u00fcdlichen H\u00e4nge der Akropolis und diente einst als Konzertsaal mit 32 Sitzreihen im Halbkreis, einer B\u00fchne und einer Holzdecke f\u00fcr die Akustik. Hier kamen 5000 Menschen unter, w\u00e4hrend die dreist\u00f6ckige Fassade des Odeons mit vier gro\u00dfen B\u00f6gen ausgestattet und mit Statuen der Musen dekoriert war.",
-        "image": "Odeon des Herodes Atticus.jpg",
-        "distance": 1.128465041003696
+        "description": "Herodes Atticus war ein aristokratischer und wohlhabender Grieche, der mehrere große Bauprojekte im alten Athen finanzierte, darunter das Odeon, das er 161 v. Chr. in Gedenken an seine Frau in Auftrag gab. Das Odeon befindet sich am Fuße der südlichen Hänge der Akropolis und diente einst als Konzertsaal mit 32 Sitzreihen im Halbkreis, einer Bühne und einer Holzdecke für die Akustik. Hier kamen 5000 Menschen unter, während die dreistöckige Fassade des Odeons mit vier großen Bögen ausgestattet und mit Statuen der Musen dekoriert war.",
+        "image": "odeon_des_herodes_atticus1.jpg"
     },
     {
         "name": "Wabi Sabi",
         "address": "Emmanouil Benaki 9, Athen 106 78",
         "x": 37.9836115,
         "y": 23.7309452,
-        "description": "Das Wabi Sabi ist eines der besten Restaurants Athens wenn es um das Thema Chinesisches Essen in Griechenland geht. Von Sushi \u00fcber gebratene Ente bis hin zu feinsten Reisnudeln wird hier alle geboten und das alles auch noch zu einem unschlagbaren Preis, wie sie ihn in Athen kein zweites Mal finden werden! Bester Fisch aus Gro\u00dfteiles lokalem Fischfang hat bisher noch jeden unserer w\u00e4hrten Besucher \u00fcberzeugt. Wir haben jeden Tag im Jahr ge\u00f6ffnet f\u00fcr Sie von 9.00 Uhr bis 23.00 Uhr au\u00dfer am chinesischen Neujahr.",
-        "image": "Wabi Sabi.jpg",
-        "distance": 0.41003611140797025
+        "description": "Das Wabi Sabi ist eines der besten Restaurants Athens wenn es um das Thema Chinesisches Essen in Griechenland geht. Von Sushi über gebratene Ente bis hin zu feinsten Reisnudeln wird hier alle geboten und das alles auch noch zu einem unschlagbaren Preis, wie sie ihn in Athen kein zweites Mal finden werden! Bester Fisch aus Großteiles lokalem Fischfang hat bisher noch jeden unserer währten Besucher überzeugt. Wir haben jeden Tag im Jahr geöffnet für Sie von 9.00 Uhr bis 23.00 Uhr außer am chinesischen Neujahr.",
+        "image": "wabi_sabi1.jpg"
     },
     {
         "name": "Dionysostheater",
         "address": "Mitseon 25, Athina 117 42",
         "x": 37.9703709,
         "y": 23.7278924,
-        "description": "Das Dionysostheater, am Fu\u00dfe des s\u00fcdlichen Abhangs der Akropolis, ist die Geburtsst\u00e4tte des europ\u00e4ischen Theaters. Bereits im Jahre 534 v. Chr. wurden hier ber\u00fchmte griechische Trag\u00f6dien und Kom\u00f6dien aufgef\u00fchrt. Viele St\u00fccke von ber\u00fchmten griechischen Schriftstellern wurden hier w\u00e4hrend den Dionysien, einem Theaterfestival zu Ehren des Gottes Dionysos, nach dem das Theater benannt wurde, uraufgef\u00fchrt. Dionysos galt als der Gott des Theaters.",
-        "image": "Dionysostheater.jpg",
-        "distance": 1.086527090639715
+        "description": "Das Dionysostheater, am Fuße des südlichen Abhangs der Akropolis, ist die Geburtsstätte des europäischen Theaters. Bereits im Jahre 534 v. Chr. wurden hier berühmte griechische Tragödien und Komödien aufgeführt. Viele Stücke von berühmten griechischen Schriftstellern wurden hier während den Dionysien, einem Theaterfestival zu Ehren des Gottes Dionysos, nach dem das Theater benannt wurde, uraufgeführt. Dionysos galt als der Gott des Theaters.",
+        "image": "dionysostheater1.jpg"
     },
     {
         "name": "Nationalgarten",
         "address": "Leoforos Vasilisis Amalias 1, Athina 105 57",
         "x": 37.9728375,
         "y": 23.7374876,
-        "description": "Der Nationalgarten, die gr\u00f6\u00dfte gr\u00fcne Oase im Athener Zentrum ist ideal f\u00fcr einen Spaziergang zwischen den ger\u00e4uschvollen Boulevards. Er wurde im Jahr 1839 gestaltet und war der Garten des Palastes der ersten K\u00f6nige Griechenlands, wo heute das griechische Parlament steht. Der Nationalgarten hat auch Seen mit Enten, Skulpturen, eine originelle Sonnenuhr, verstreute Altert\u00fcmer, Botanisches Museum, Spielplatz, Spielbibliothek und ein malerisches traditionelles Caf\u00e9. Er ist jeden Tag von dem Sonnenaufgang bis den Sonnenuntergang ge\u00f6ffnet.",
-        "image": "Nationalgarten.jpg",
-        "distance": 1.0320030003986718
+        "description": "Der Nationalgarten, die größte grüne Oase im Athener Zentrum ist ideal für einen Spaziergang zwischen den geräuschvollen Boulevards. Er wurde im Jahr 1839 gestaltet und war der Garten des Palastes der ersten Könige Griechenlands, wo heute das griechische Parlament steht. Der Nationalgarten hat auch Seen mit Enten, Skulpturen, eine originelle Sonnenuhr, verstreute Altertümer, Botanisches Museum, Spielplatz, Spielbibliothek und ein malerisches traditionelles Café. Er ist jeden Tag von dem Sonnenaufgang bis den Sonnenuntergang geöffnet.",
+        "image": "nationalgarten1.jpg"
     },
     {
         "name": "Tempel der Athena",
         "address": "Acropolis, Dionysiou Areopagitou, Athina 105 58",
         "x": 37.9715173,
         "y": 23.7248735,
-        "description": "Der Alte Athena-Tempel war bis zur Zerst\u00f6rung durch die Perser im Jahr 480 v. Chr. der Kultbau f\u00fcr Athena Polias, die Stadtg\u00f6ttin Athens auf der Akropoliss. An zentraler Stelle auf der Akropolis gelegen, erhob er sich auf den Resten einer mykenischen Palastanlage. Neben den Fundamenten wurden zahlreiche Bauglieder dorischer Ordnung gefunden, die mit dem Tempel und seinen verschiedenen Bauphasen in Verbindung gebracht werden. Die Fundamente waren aus unterschiedlichen Materialien und in unterschiedlicher Technik verlegt.",
-        "image": "Tempel der Athena.jpg",
-        "distance": 1.044797276854146
+        "description": "Der Alte Athena-Tempel war bis zur Zerstörung durch die Perser im Jahr 480 v. Chr. der Kultbau für Athena Polias, die Stadtgöttin Athens auf der Akropoliss. An zentraler Stelle auf der Akropolis gelegen, erhob er sich auf den Resten einer mykenischen Palastanlage. Neben den Fundamenten wurden zahlreiche Bauglieder dorischer Ordnung gefunden, die mit dem Tempel und seinen verschiedenen Bauphasen in Verbindung gebracht werden. Die Fundamente waren aus unterschiedlichen Materialien und in unterschiedlicher Technik verlegt.",
+        "image": "tempel_der_athena1.jpg"
     },
     {
         "name": "Akropolismuseum",
         "address": "Dionysiou Areopagitou 15, Athina 117 42",
         "x": 37.9684444,
         "y": 23.7285321,
-        "description": "Das Neue Akropolis-Museum l\u00e4sst das ausgediente Museum auf dem Felsplateau der Akropolis v\u00f6llig in Vergessenheit geraten. Bereits w\u00e4hrend der feierlichen Er\u00f6ffnung am 20. Juni 2009 wurde international ein einhelliger Sturm der Begeisterung ausgel\u00f6st. Das Neue Akropolis-Museum hat einen Platz in der Riege der besten Museen weltweit eingenommen. Die Architektur und Konzeption des neuen Bauwerks, die Atmosph\u00e4re aus Antike und Moderne und die technische Umsetzung der Pr\u00e4sentation der Exponate suchen Ihresgleichen. ",
-        "image": "Akropolismuseum.jpg",
-        "distance": 1.2913500875395183
+        "description": "Das Neue Akropolis-Museum lässt das ausgediente Museum auf dem Felsplateau der Akropolis völlig in Vergessenheit geraten. Bereits während der feierlichen Eröffnung am 20. Juni 2009 wurde international ein einhelliger Sturm der Begeisterung ausgelöst. Das Neue Akropolis-Museum hat einen Platz in der Riege der besten Museen weltweit eingenommen. Die Architektur und Konzeption des neuen Bauwerks, die Atmosphäre aus Antike und Moderne und die technische Umsetzung der Präsentation der Exponate suchen Ihresgleichen. ",
+        "image": "akropolismuseum1.jpg"
     },
     {
         "name": "Hadrianstor",
         "address": "Leoforos Vasilisis Amalias 50, Athina 105 58",
         "x": 37.9701893,
         "y": 23.7320125,
-        "description": "Der den Athenern zugeneigte Kaiser Hadrian gr\u00fcndete einst ein Stadtviertel an der \u00f6stlichen Grenze des alten Athens. Zu seinen Ehren gaben die Athener diesem den Namen Adrianopolis und errichteten in den Jahren 131 bis 132 nach Christus ein Tor aus pentelischem Marmor, das Hadrianstor, das von der alten Stadt in die neue \u00fcberleitete. Das Tor, das sich nur unweit des Tempels des Olympischen Zeus befindet, blieb bis in die Neuzeit intakt und hervorragend erhalten. Es z\u00e4hlt heutzutage zu den bekanntesten und meistfotografierten Bauwerken der Stadt. ",
-        "image": "Hadrianstor.jpg",
-        "distance": 1.105070215250572
+        "description": "Der den Athenern zugeneigte Kaiser Hadrian gründete einst ein Stadtviertel an der östlichen Grenze des alten Athens. Zu seinen Ehren gaben die Athener diesem den Namen Adrianopolis und errichteten in den Jahren 131 bis 132 nach Christus ein Tor aus pentelischem Marmor, das Hadrianstor, das von der alten Stadt in die neue überleitete. Das Tor, das sich nur unweit des Tempels des Olympischen Zeus befindet, blieb bis in die Neuzeit intakt und hervorragend erhalten. Es zählt heutzutage zu den bekanntesten und meistfotografierten Bauwerken der Stadt. ",
+        "image": "hadrianstor1.jpg"
     },
     {
         "name": "KFC",
         "address": "Mitropoleos 3, Athina 105 57",
         "x": 37.9750144,
         "y": 23.7337011,
-        "description": "KFC bedeutet knuspriges und leckeres H\u00e4hnchen! In KFC geht es um H\u00fchnerfleisch - das leckerste H\u00fchnchen der Welt - mit echtem Essen und schnellem Service in einer freundlichen und modernen Umgebung! 1993 kreierte Colonel Harland Sanders das urspr\u00fcngliche Rezept aus Kentucky, pr\u00e4sentierte die geheime Mischung aus 11 Kr\u00e4utern und Gew\u00fcrzen und er\u00f6ffnete ein kleines Restaurant namens Sanders . Dort begann er, H\u00fchnchen mit dem ber\u00fchmten Rezept aus 11 Kr\u00e4utern und Gew\u00fcrzen zu kochen KFC-H\u00fchner wurden so ber\u00fchmt. Heute z\u00e4hlt KFC zu den gr\u00f6\u00dften Fast-Food-Ketten der Welt.",
-        "image": "KFC.jpg",
-        "distance": 0.6423125189118918
+        "description": "KFC bedeutet knuspriges und leckeres Hähnchen! In KFC geht es um Hühnerfleisch - das leckerste Hühnchen der Welt - mit echtem Essen und schnellem Service in einer freundlichen und modernen Umgebung! 1993 kreierte Colonel Harland Sanders das ursprüngliche Rezept aus Kentucky, präsentierte die geheime Mischung aus 11 Kräutern und Gewürzen und eröffnete ein kleines Restaurant namens Sanders . Dort begann er, Hühnchen mit dem berühmten Rezept aus 11 Kräutern und Gewürzen zu kochen KFC-Hühner wurden so berühmt. Heute zählt KFC zu den größten Fast-Food-Ketten der Welt.",
+        "image": "kfc1.jpg"
     }
 ]

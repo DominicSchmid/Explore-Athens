@@ -36,6 +36,7 @@ ADMIN_KEY = "12345"
 DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 DATE_FORMAT = "%Y-%m-%d"
 TIME_FORMAT = "%H:%M:%S"
+HOST = "0.0.0.0"  # 10.10.30.9:5053
 
 IMG_DIR = "images"
 IMAGES = {}
@@ -56,7 +57,9 @@ sites = [
         "x": 37.9715326,
         "y": 23.7257335,
         "description": "Das ist die Akropolis",
-        "image": "empty"
+        "image1": "empty",
+        "image2": "empty",
+        "image3": "empty"
     },
     {
         "name": "Bonzata",
@@ -87,6 +90,7 @@ def read_config():
         DATE_FORMAT = config["date_format"]
         TIME_FORMAT = config["time_format"]
         IMG_DIR = config["img_dir"]
+        HOST = config["host"]
         print("Read configuration successfully!")
     except Exception as e:
         print("Fatal error: 'config.json' was not found or has errors: {}".format(e))
@@ -123,7 +127,7 @@ class WeatherNow(Resource):
                 "time": get_time(),
                 "min_temp": float(res["main"]["temp_min"]),
                 "max_temp": float(res["main"]["temp_max"]),
-                "temp": float(res["main"]["temp"]),  # Temp in °C
+                "temp": float(res["main"]["temp"]),  # Temp in C
                 "humidity": float(res["main"]["humidity"]),  # Percentage
                 "icon": res["weather"][0]["icon"],  # Image ID for png
                 "description": res["weather"][0]["description"]
@@ -150,7 +154,7 @@ class WeatherForecast(Resource):
             place = "Athens,GR"
 
         res = requests.get(
-            FORECAST_URL, {"q": place, "appid": WEATHER_KEY, "units": "metric", "cnt": 4})  # 4 Tage
+            FORECAST_URL, {"q": place, "appid": WEATHER_KEY, "units": "metric"})  # 4 Tage
 
         code = res.status_code
         res = res.json()  # Convert to JSON object to read data
@@ -168,7 +172,7 @@ class WeatherForecast(Resource):
                 forecast["forecast"].append({
                     "min_temp": float(f["main"]["temp_min"]),
                     "max_temp": float(f["main"]["temp_max"]),
-                    "temp": float(f["main"]["temp"]),  # Temp in °C
+                    "temp": float(f["main"]["temp"]),  # Temp in C
                     "humidity": float(f["main"]["humidity"]),  # Percentage
                     "icon": f["weather"][0]["icon"],  # Image ID for png
                     "description": f["weather"][0]["description"],
@@ -194,7 +198,7 @@ class Sites(Resource):
             a json object of the list of sites within a given radius of the users position.
         """
 
-        if not sites:  # If sites array is empty renew. This should really only happen at the beginning
+        if not sites or len(sites) < 5:  # If sites array is empty renew. This should really only happen at the beginning
             renew_sites()
             print("Sites renewed")
         # If called sites without arguments
@@ -261,8 +265,8 @@ class Position(Resource):
         parser.add_argument("y")
         args = parser.parse_args()
 
-        if args["x"] is None and args["y"] is None:
-            return {"message": "No coordinates specified!"}, 400
+        if args["x"] is None or args["y"] is None:
+            return {"message": "Coordinates not specified correctly!"}, 400
 
         return add_position(uid, args["x"], args["y"])
 
@@ -293,7 +297,7 @@ class Route(Resource):
                     json.dump(res, f, indent=4)
 
             return res, 200, {"response-type": "route"}
-        return {"message": "Route could not be calculated!", "Code": "{}".format(res.text)}, 400
+        return {"message": "Route could not be calculated!", "code": "{}".format(res.text)}, 400
 
 
 class Image(Resource):
@@ -311,10 +315,9 @@ class Image(Resource):
             a byte string or directly downloads a file if opened in the browser
         """
         try:
-            extension = os.path.splitext(IMAGES[path])[1]
-            response = make_response(send_from_directory(IMG_DIR, IMAGES[path], as_attachment=True))
+            extension = os.path.splitext(path)[1]
+            response = make_response(send_from_directory(IMG_DIR, path, as_attachment=True))
             response.headers["response-type"] = "image"
-            response.headers["filename"] = IMAGES[path]
             response.status_code = 200
             return response
             # return send_from_directory(IMG_DIR, IMAGES[path], as_attachment=True), 200, {"response-type": "image", "extension": extension}
@@ -346,9 +349,9 @@ class AdminSite(Resource):
             if site["name"].lower() == name.lower():
                 # Site exists, change info that is different TODO alter table
                 site["address"] = args["address"]
-                site["x"]: float(args["x"])
-                site["y"]: float(args["y"])
-                site["description"]: args["description"]
+                site["x"] = float(args["x"])
+                site["y"] = float(args["y"])
+                site["description"] = args["description"]
                 return "{} updated successfully!".format(name), 200
 
         # TODO database create new item
@@ -387,40 +390,37 @@ def db_connect():
         an instance of a MySQL Connection
     """
     cnx = mysql.connector.connect(user="root", password="mysql#5BT", host="localhost",
-                                  database="python", auth_plugin="mysql_native_password")
+                                  database="test", auth_plugin="mysql_native_password")  # TODO database python
     return cnx
 
 
 def renew_sites():
     """Updates site array with newest sites by fetching all from mysql database"""
-    cnx = db_connect()
-    cursor = cnx.cursor()
-    cursor.execute("SELECT * FROM sites")
+    try:
+        cnx = db_connect()
+        cursor = cnx.cursor()
+        cursor.execute("SELECT * FROM sites")
 
-    # Update all known sites
-    sites.clear()
-    for entry in cursor.fetchall():
-        # Name, Address, X, Y, Description
-        sites.append({
-            "name": entry[1],
-            "address": entry[2],
-            "x": entry[3],
-            "y": entry[4],
-            "description": entry[5],
-            "image": entry[6]
-        })
-    cnx.close()  # Close due to resource leakage
-
-
-def renew_images():
-    """Updates image key values
-
-    Example:
-        /image/akropolis will look for akropolis.png"""
-    renew_sites()
-
-    for s in sites:
-        IMAGES[s["name"]] = s["image"]
+        # Update all known sites
+        sites.clear()
+        for entry in cursor.fetchall():
+            # Name, Address, X, Y, Description
+            sites.append({
+                "name": entry[1],
+                "address": entry[2],
+                "x": entry[3],
+                "y": entry[4],
+                "description": entry[5],
+                "images": [
+                    entry[6],
+                    entry[7],
+                    entry[8]
+                ]
+            })
+        cnx.close()  # Close due to resource leakage
+    except Exception as e:
+        print("Databse connection error:")
+        print(e)
 
 
 def add_position(user, x, y):
@@ -436,13 +436,13 @@ def add_position(user, x, y):
     try:
         standort_url = "185.5.199.33:5051/addLocation"
         res = requests.post("{}/{}/{}/{}".format(standort_url, user, x, y))
-
         if res.status_code == 200:
             return {"success": "Position added successfully!"}, 201
         else:
-            return {"message": res.content()}, res.status_code
-    except:
-        return {"message": "Syntax error inserting new position for {}!".format(user), "error": res.content()}, 400
+            return {"message": json.loads(res.content)}, res.status_code
+    except Exception as e:
+        print("Destination server unreachable")
+        return {"message": "Destination server did not respond! Please wait and hope for the best"}, 400
 
 
 def get_date():
@@ -467,8 +467,10 @@ api.add_resource(Image, "/image/<string:path>")
 
 
 read_config()
-renew_images()
+renew_sites()
 
-app.run(debug=True)
+# app.run(host="0.0.0.0")
+app.run(host=HOST)
+# app.run(debug=True)
 # TODO change database to support image paths, change this code to send image paths in response
 # TODO do not use run in a production environment, check function documentations
