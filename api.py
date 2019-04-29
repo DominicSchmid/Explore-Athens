@@ -1,10 +1,12 @@
 import datetime as dt
+import os
 import requests
 import json
+import sys
 
-from flask_restful import Api, Resource, reqparse, abort, request
+from flask_restful import Api, Resource, reqparse
 from flask import Flask, send_from_directory, make_response
-import os
+
 import mysql.connector
 from mpu import haversine_distance
 
@@ -57,9 +59,11 @@ sites = [
         "x": 37.9715326,
         "y": 23.7257335,
         "description": "Das ist die Akropolis",
-        "image1": "empty",
-        "image2": "empty",
-        "image3": "empty"
+        "images": [
+            "akropolis1.jpg",
+            "akropolis2.jpg",
+            "akropolis3.jpg"
+        ]
     },
     {
         "name": "Bonzata",
@@ -67,7 +71,11 @@ sites = [
         "x": 37.9215326,
         "y": 23.7557335,
         "description": "Das ist ein anderes Point of Interest!",
-        "image": "empty"
+        "images": [
+            "agora1.jpg",
+            "agora2.jpg",
+            "agora3.jpg"
+        ]
     }
 ]
 
@@ -197,16 +205,21 @@ class Sites(Resource):
         Returns:
             a json object of the list of sites within a given radius of the users position.
         """
-
-        if not sites or len(sites) < 5:  # If sites array is empty renew. This should really only happen at the beginning
-            renew_sites()
-            print("Sites renewed")
         # If called sites without arguments
-        if x is None and y is None:
-            parser = reqparse.RequestParser()
-            parser.add_argument("name")
-            args = parser.parse_args()
+        parser = reqparse.RequestParser()
+        parser.add_argument("name")
+        parser.add_argument("lan")
+        parser.add_argument("radius")
+        args = parser.parse_args()
 
+        if args["lan"] is None:
+            language = "de"
+        else:
+            language = args["lan"]
+
+        renew_sites(language)
+
+        if x is None and y is None:
             # If sites called and no name is given then return all sites
             if args["name"] is None:
                 return sites, 200, {"response-type": "sites"}
@@ -220,11 +233,6 @@ class Sites(Resource):
             if new_sites:  # If array is not empty
                 return new_sites, 200, {"response-type": "sites"}
             return {"message": "Site not found!"}, 404
-
-        # Otherwise the request was for a radius calculation
-        parser = reqparse.RequestParser()
-        parser.add_argument("radius")
-        args = parser.parse_args()
 
         # Use specified radius if radius is given
         if args["radius"] is not None:
@@ -389,37 +397,47 @@ def db_connect():
     Returns:
         an instance of a MySQL Connection
     """
-    cnx = mysql.connector.connect(user="root", password="mysql#5BT", host="localhost",
-                                  database="test", auth_plugin="mysql_native_password")  # TODO database python
+    try:
+        cnx = mysql.connector.connect(user="root", password="mysql#5BT", host="localhost",
+                                      database="python", auth_plugin="mysql_native_password")  # TODO database python
+    except Exception as e:
+        print("Database connection error:")
+        print(e)
+        print("The application was started but it may not function correctly.")
+        return None
+
     return cnx
 
 
-def renew_sites():
+def renew_sites(language):
     """Updates site array with newest sites by fetching all from mysql database"""
+
     try:
         cnx = db_connect()
         cursor = cnx.cursor()
-        cursor.execute("SELECT * FROM sites")
+        query = "SELECT s_name, s_address, s_x, s_y, s_description, s_image1, s_image2, s_image3 FROM sites JOIN siteinfo{} ON sites.s_id = siteinfo{}.s_id".format(
+            language, language)
+        cursor.execute(query)
 
         # Update all known sites
         sites.clear()
         for entry in cursor.fetchall():
             # Name, Address, X, Y, Description
             sites.append({
-                "name": entry[1],
-                "address": entry[2],
-                "x": entry[3],
-                "y": entry[4],
-                "description": entry[5],
+                "name": entry[0],
+                "address": entry[1],
+                "x": entry[2],
+                "y": entry[3],
+                "description": entry[4],
                 "images": [
+                    entry[5],
                     entry[6],
-                    entry[7],
-                    entry[8]
+                    entry[7]
                 ]
             })
         cnx.close()  # Close due to resource leakage
     except Exception as e:
-        print("Databse connection error:")
+        print("Error trying to fetch Sites")
         print(e)
 
 
@@ -467,10 +485,22 @@ api.add_resource(Image, "/image/<string:path>")
 
 
 read_config()
-renew_sites()
 
 # app.run(host="0.0.0.0")
-app.run(host=HOST)
+# If cmd line arguments passed use first argument as host IP
+if len(sys.argv) > 0:
+    try:
+        HOST = sys.argv[1]
+        print("Argument detected and using as host ip: {}".format(HOST))
+    except:
+        pass
+
+if HOST == "localhost":
+    app.run(debug=True)
+else:
+    app.run(host=HOST)
+
+
 # app.run(debug=True)
 # TODO change database to support image paths, change this code to send image paths in response
 # TODO do not use run in a production environment, check function documentations
