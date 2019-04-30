@@ -52,32 +52,8 @@ IMAGES = {}
 400 Bad Request (Syntax), 401 Unauthorized (No Key), 403 Forbidden, 404 Not Found
 """
 
-sites = [
-    {
-        "name": "Akropolis",
-        "address": "Max Mustermannstrasse 1",
-        "x": 37.9715326,
-        "y": 23.7257335,
-        "description": "Das ist die Akropolis",
-        "images": [
-            "akropolis1.jpg",
-            "akropolis2.jpg",
-            "akropolis3.jpg"
-        ]
-    },
-    {
-        "name": "Bonzata",
-        "address": "Max Sonnleiten 21",
-        "x": 37.9215326,
-        "y": 23.7557335,
-        "description": "Das ist ein anderes Point of Interest!",
-        "images": [
-            "agora1.jpg",
-            "agora2.jpg",
-            "agora3.jpg"
-        ]
-    }
-]
+# Global sites array containing all sites at runtime
+sites = []
 
 
 def read_config():
@@ -220,6 +196,7 @@ class Sites(Resource):
         renew_sites(language)
 
         if x is None and y is None:
+            # No need to react to radius parameter if two coordinates were given
             # If sites called and no name is given then return all sites
             if args["name"] is None:
                 return sites, 200, {"response-type": "sites"}
@@ -245,7 +222,7 @@ class Sites(Resource):
             distance = haversine_distance((site["x"], site["y"]), (x, y))
             # print("Distance between ({}/{}) and ({}/{}): {:.4f}km".format(
             #    site["x"], site["y"], x, y, distance))
-            if distance < radius:
+            if distance <= radius:
                 site["distance"] = distance
                 sites_in_radius.append(site)
 
@@ -485,6 +462,7 @@ api.add_resource(Image, "/image/<string:path>")
 
 
 read_config()
+renew_sites("de")
 
 # app.run(host="0.0.0.0")
 # If cmd line arguments passed use first argument as host IP

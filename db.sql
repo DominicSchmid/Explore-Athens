@@ -1,4 +1,4 @@
-USE python;
+USE test;
 CREATE TABLE IF NOT EXISTS SiteInfoDe(
 	s_id INT NOT NULL,
     s_name VARCHAR(50) NOT NULL,
